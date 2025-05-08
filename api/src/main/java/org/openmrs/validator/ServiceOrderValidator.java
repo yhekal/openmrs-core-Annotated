@@ -47,6 +47,7 @@ public class ServiceOrderValidator extends OrderValidator implements Validator {
 	 * <strong>Should</strong> pass validation if the specimen source is valid
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) {
 		super.validate(obj, errors);
 		ServiceOrder order = (ServiceOrder) obj;
@@ -61,4 +62,5 @@ public class ServiceOrderValidator extends OrderValidator implements Validator {
 			}
 		}
 	}
+	// &end[validate]
 }

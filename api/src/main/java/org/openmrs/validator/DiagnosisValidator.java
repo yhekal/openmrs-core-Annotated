@@ -41,6 +41,7 @@ public class DiagnosisValidator implements Validator {
 	 * <strong>Should</strong> fail validation if encounter is null
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object o, Errors errors) {
 		Diagnosis diagnosis = (Diagnosis)o;
 		
@@ -69,4 +70,5 @@ public class DiagnosisValidator implements Validator {
 			errors.rejectValue("rank", "error.rank.notPositiveInteger");
 		}
 	}
+	// &end[validate]
 }

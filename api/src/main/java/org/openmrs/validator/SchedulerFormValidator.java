@@ -47,6 +47,7 @@ public class SchedulerFormValidator implements Validator {
 	 * <strong>Should</strong> fail validation if field lengths are not correct
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) {
 		TaskDefinition taskDefinition = (TaskDefinition) obj;
 		
@@ -93,5 +94,6 @@ public class SchedulerFormValidator implements Validator {
 			}
 		}
 	}
+	// &end[validate]
 	
 }

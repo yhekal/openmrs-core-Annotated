@@ -34,7 +34,7 @@ public class TaskThreadedInitializationWrapper implements Task {
 	
 	private boolean initialized = false;
 	
-	private final Lock lock = new ReentrantLock();
+	private final Lock lock = new ReentrantLock(); // &line[ReentrantLock]
 	
 	private final Condition initializedCond = lock.newCondition();
 	
@@ -53,7 +53,7 @@ public class TaskThreadedInitializationWrapper implements Task {
 	 */
 	@Override
 	public void execute() {
-		lock.lock();
+		lock.lock(); // &line[ReentrantLock_lock]
 		try {
 			while (!initialized) {
 				initializedCond.await();
@@ -64,7 +64,7 @@ public class TaskThreadedInitializationWrapper implements Task {
 			return;
 		}
 		finally {
-			lock.unlock();
+			lock.unlock(); // &line[ReentrantLock_unlock]
 		}
 
 		try {
@@ -82,14 +82,14 @@ public class TaskThreadedInitializationWrapper implements Task {
 	@Override
 	public void initialize(final TaskDefinition config) {
 		OpenmrsThreadPoolHolder.threadExecutor.submit(() -> {
-			lock.lock();
+			lock.lock(); // &line[ReentrantLock_lock]
 			try {
 				task.initialize(config);
 				initialized = true;
 				initializedCond.signalAll();
 			}
 			finally {
-				lock.unlock();
+				lock.unlock(); // &line[ReentrantLock_unlock]
 			}
 		});
 	}

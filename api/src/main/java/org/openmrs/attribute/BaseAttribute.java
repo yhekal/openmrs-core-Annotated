@@ -13,7 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
 import org.hibernate.envers.Audited;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.annotations.Field;
 import org.openmrs.BaseChangeableOpenmrsData;
 import org.openmrs.customdatatype.CustomDatatypeUtil;
 import org.openmrs.customdatatype.Customizable;
@@ -38,7 +38,7 @@ public abstract class BaseAttribute<AT extends AttributeType, OwningType extends
 	private AT attributeType;
 	
 	// value pulled from the database
-	@FullTextField
+	@Field
 	@Column(name = "value_reference", nullable = false, length = 65535)
 	private String valueReference;
 	

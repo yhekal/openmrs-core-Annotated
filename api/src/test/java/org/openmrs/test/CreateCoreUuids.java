@@ -75,7 +75,7 @@ public class CreateCoreUuids extends BaseContextSensitiveTest {
 		
 		// roles:
 		System.out.println("Roles");
-		for (Role role : Context.getUserService().getAllRoles()) {
+		for (Role role : Context.getUserService().getAllRoles()) { 
 			String output = "<update tableName=\"role\"><column name=\"uuid\" value=\"" + role.getUuid()
 			        + "\"/><where> role = '" + role.getRole().replace("'", "\\'") + "'</where></update>";
 			System.out.println(output);

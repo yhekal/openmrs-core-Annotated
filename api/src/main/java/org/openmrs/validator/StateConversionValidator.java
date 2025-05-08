@@ -48,6 +48,7 @@ public class StateConversionValidator implements Validator {
 	 * <strong>Should</strong> pass validation if all required fields have proper values
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) {
 		ConceptStateConversion c = (ConceptStateConversion) obj;
 		if (c == null) {
@@ -59,5 +60,5 @@ public class StateConversionValidator implements Validator {
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programWorkflowState", "error.programWorkflowState");
 		}
 	}
-	
+	// &end[validate]
 }

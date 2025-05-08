@@ -83,12 +83,14 @@ public class ModuleConditionalResource {
 	}
 	
 	@Override
+		// &begin[hashCode]
 	public int hashCode() {
 		int result = path != null ? path.hashCode() : 0;
 		result = 31 * result + (openmrsPlatformVersion != null ? openmrsPlatformVersion.hashCode() : 0);
 		result = 31 * result + (modules != null ? modules.hashCode() : 0);
 		return result;
 	}
+	// &end[hashCode]
 	
 	public static class ModuleAndVersion {
 		
@@ -129,11 +131,13 @@ public class ModuleConditionalResource {
 		}
 		
 		@Override
+			// &begin[hashCode]
 		public int hashCode() {
 			int result = moduleId != null ? moduleId.hashCode() : 0;
 			result = 31 * result + (version != null ? version.hashCode() : 0);
 			return result;
 		}
+		// &end[hashCode]
 		
 		@Override
 		public String toString() {

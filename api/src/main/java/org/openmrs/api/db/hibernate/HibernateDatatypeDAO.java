@@ -40,7 +40,7 @@ public class HibernateDatatypeDAO implements DatatypeDAO {
 	 * @return current Hibernate session
 	 */
 	private Session session() {
-		return sessionFactory.getCurrentSession();
+		return sessionFactory.getCurrentSession(); // &line[getCurrentSession]
 	}
 	
 	/**

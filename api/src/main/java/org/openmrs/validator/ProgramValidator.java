@@ -49,6 +49,7 @@ public class ProgramValidator implements Validator {
 	 * <strong>Should</strong> fail validation if field lengths are not correct
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) {
 		Program p = (Program) obj;
 		if (p == null) {
@@ -67,4 +68,5 @@ public class ProgramValidator implements Validator {
 			ValidateUtil.validateFieldLengths(errors, obj.getClass(), "name");
 		}
 	}
+	// &end[validate]
 }

@@ -45,6 +45,7 @@ public class PersonAttributeTypeValidator implements Validator {
 	 * <strong>Should</strong> fail validation if field lengths are not correct
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) {
 		PersonAttributeType patObj = (PersonAttributeType) obj;
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "PersonAttributeType.error.nameEmpty");
@@ -56,4 +57,5 @@ public class PersonAttributeTypeValidator implements Validator {
 		}
 		ValidateUtil.validateFieldLengths(errors, obj.getClass(), "name", "format", "retireReason");
 	}
+	// &end[validate]
 }

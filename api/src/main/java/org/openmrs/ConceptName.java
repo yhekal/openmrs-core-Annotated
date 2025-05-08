@@ -15,24 +15,37 @@ import java.util.HashSet;
 import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
+import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilterFactory;
+import org.apache.lucene.analysis.standard.StandardFilterFactory;
+import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.envers.Audited;
-import org.hibernate.search.mapper.pojo.bridge.mapping.annotation.ValueBridgeRef;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.DocumentId;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordField;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.AnalyzerDef;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.TokenFilterDef;
+import org.hibernate.search.annotations.TokenizerDef;
 import org.openmrs.api.ConceptNameType;
-import org.openmrs.api.db.hibernate.search.SearchAnalysis;
-import org.openmrs.api.db.hibernate.search.bridge.LocaleValueBridge;
+import org.openmrs.api.db.hibernate.search.bridge.LocaleFieldBridge;
 
 /**
  * ConceptName is the real world term used to express a Concept within the idiom of a particular
  * locale.
  */
 @Indexed
+@AnalyzerDef(
+	name = "ConceptNameAnalyzer", tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class), filters = {
+        @TokenFilterDef(factory = StandardFilterFactory.class), 
+		@TokenFilterDef(factory = LowerCaseFilterFactory.class), 
+		@TokenFilterDef(factory = ASCIIFoldingFilterFactory.class)
+	})
+@Analyzer(definition = "ConceptNameAnalyzer")
 @Audited
 public class ConceptName extends BaseOpenmrsObject implements Auditable, Voidable, java.io.Serializable {
 	
@@ -44,17 +57,19 @@ public class ConceptName extends BaseOpenmrsObject implements Auditable, Voidabl
 	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	private Concept concept;
 	
-	@FullTextField(analyzer = SearchAnalysis.NAME_ANALYZER)
+	@Field
 	private String name;
 	
-	@KeywordField(valueBridge = @ValueBridgeRef(type = LocaleValueBridge.class))
+	@Field(analyze = Analyze.NO)
+	@FieldBridge(impl = LocaleFieldBridge.class)
+	// ABK: upgraded from a plain string to a full locale object
 	private Locale locale; 
 	
 	private User creator;
 	
 	private Date dateCreated;
 	
-	@GenericField
+	@Field
 	private Boolean voided = false;
 	
 	private User voidedBy;
@@ -65,10 +80,10 @@ public class ConceptName extends BaseOpenmrsObject implements Auditable, Voidabl
 	
 	private Collection<ConceptNameTag> tags;
 	
-	@GenericField
+	@Field
 	private ConceptNameType conceptNameType;
 	
-	@GenericField
+	@Field
 	private Boolean localePreferred = false;
 	
 	private User changedBy;

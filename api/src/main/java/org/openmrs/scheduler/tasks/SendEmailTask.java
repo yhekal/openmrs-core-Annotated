@@ -27,11 +27,11 @@ public class SendEmailTask extends AbstractTask {
 	@Override
 	public void execute() {
 		try {
-			Context.openSession();
+			Context.openSession(); // &line[openSession]
 			log.info("****************************** SEND EMAIL TASK:  Executing task ...");
 		}
 		finally {
-			Context.closeSession();
+			Context.closeSession(); // &line[closeSession]
 		}
 		
 	}

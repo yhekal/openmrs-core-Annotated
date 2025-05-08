@@ -39,7 +39,7 @@ public class Security {
 	 */
 	private static final Logger log = LoggerFactory.getLogger(Security.class);
 	
-	private static final Random RANDOM = new SecureRandom();
+	private static final Random RANDOM = new SecureRandom(); // &line[SourceOfRandomness_SecureRandom_L]
 
 	private Security() {
 	}
@@ -78,9 +78,11 @@ public class Security {
 	 * @return the SHA-512 encryption of a given string
 	 * <strong>Should</strong> encode strings to 128 characters
 	 */
+	// &begin[encodeString]
 	public static String encodeString(String strToEncode) throws APIException {
 		return encodeString(strToEncode, "SHA-512");
 	}
+	// &end[encodeString]
 
 	/**
 	 * This method will hash <code>strToEncode</code> using the old SHA-1 algorithm.
@@ -88,18 +90,23 @@ public class Security {
 	 * @param strToEncode string to encode
 	 * @return the SHA-1 encryption of a given string
 	 */
+	// &begin[encodeStringSHA1]
 	private static String encodeStringSHA1(String strToEncode) throws APIException {
-		return encodeString(strToEncode, "SHA-1");
+		return encodeString(strToEncode, "SHA-1"); // &line[encodeString]
 	}
+	// &begin[encodeStringSHA1]
 
+	// &begin[encodeString]
 	private static String encodeString(String strToEncode, String algorithm) {
-		return hexString(digest(strToEncode.getBytes(StandardCharsets.UTF_8), algorithm));
+		return hexString(digest(strToEncode.getBytes(StandardCharsets.UTF_8), algorithm)); // &line[digest]
 	}
+	// &end[encodeString]
 
+// &begin[digest]
 	private static byte[] digest(byte[] input, String algorithm) {
 		MessageDigest md;
 		try {
-			md = MessageDigest.getInstance(algorithm);
+			md = MessageDigest.getInstance(algorithm); // &line[CryptographicHashing_getInstance_L]
 		}
 		catch (NoSuchAlgorithmException e) {
 			// Yikes! Can't encode password...what to do?
@@ -107,8 +114,9 @@ public class Security {
 			throw new APIException("system.cannot.find.encryption.algorithm", null, e);
 		}
 
-		return md.digest(input);
+		return md.digest(input); // &line[CryptographicHashing_digest_L]
 	}
+	// &end[digest]
 
 	/**
 	 * Convenience method to convert a byte array to a string
@@ -116,6 +124,7 @@ public class Security {
 	 * @param block Byte array to convert to HexString
 	 * @return Hexadecimal string encoding the byte array
 	 */
+	// &begin[hexString]
 	private static String hexString(byte[] block) {
 		StringBuilder buf = new StringBuilder();
 		char[] hexChars = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
@@ -130,6 +139,7 @@ public class Security {
 
 		return buf.toString();
 	}
+	// &begin[hexString]
 
 	/**
 	 * This method will hash <code>strToEncode</code> using SHA-1 and the incorrect hashing method
@@ -139,7 +149,7 @@ public class Security {
 	 * @return the SHA-1 encryption of a given string
 	 */
 	private static String incorrectlyEncodeString(String strToEncode) throws APIException {
-		return incorrectHexString(digest(strToEncode.getBytes(StandardCharsets.UTF_8), "SHA-1"));
+		return incorrectHexString(digest(strToEncode.getBytes(StandardCharsets.UTF_8), "SHA-1")); // &line[digest]
 	}
 
 	/**
@@ -168,11 +178,13 @@ public class Security {
 	 *
 	 * @return a secure random token.
 	 */
+	// &begin[getRandomToken]
 	public static String getRandomToken() throws APIException {
 		byte[] token = new byte[64];
 		RANDOM.nextBytes(token);
-		return hexString(digest(token, "SHA-512"));
+		return hexString(digest(token, "SHA-512"));  // &line[hexString, digest]
 	}
+	// &end[getRandomToken]
 
 	/**
 	 * encrypt text to a string with specific initVector and secretKey; rarely used except in
@@ -186,16 +198,17 @@ public class Security {
 	 * @return encrypted text
 	 * @since 1.9
 	 */
+// &begin[encrypt]
 	public static String encrypt(String text, byte[] initVector, byte[] secretKey) {
-		IvParameterSpec initVectorSpec = new IvParameterSpec(initVector);
-		SecretKeySpec secret = new SecretKeySpec(secretKey, OpenmrsConstants.ENCRYPTION_KEY_SPEC);
+		IvParameterSpec initVectorSpec = new IvParameterSpec(initVector); 
+		SecretKeySpec secret = new SecretKeySpec(secretKey, OpenmrsConstants.ENCRYPTION_KEY_SPEC); // &line[SecretKeySpec]
 		byte[] encrypted;
 		String result;
 
 		try {
-			Cipher cipher = Cipher.getInstance(OpenmrsConstants.ENCRYPTION_CIPHER_CONFIGURATION);
-			cipher.init(Cipher.ENCRYPT_MODE, secret, initVectorSpec);
-			encrypted = cipher.doFinal(text.getBytes(StandardCharsets.UTF_8));
+			Cipher cipher = Cipher.getInstance(OpenmrsConstants.ENCRYPTION_CIPHER_CONFIGURATION);  // &line[Cipher_getInstance]
+			cipher.init(Cipher.ENCRYPT_MODE, secret, initVectorSpec); // &line[cipher_init]
+			encrypted = cipher.doFinal(text.getBytes(StandardCharsets.UTF_8)); // &line[cipher_doFinal]
 			result = new String(Base64.getEncoder().encode(encrypted), StandardCharsets.UTF_8);
 		}
 		catch (GeneralSecurityException e) {
@@ -204,6 +217,7 @@ public class Security {
 
 		return result;
 	}
+	// &end[encrypt]
 
 	/**
 	 * encrypt text using stored initVector and securityKey
@@ -233,15 +247,16 @@ public class Security {
 	 * @return decrypted text
 	 * @since 1.9
 	 */
+// &begin[decrypt]
 	public static String decrypt(String text, byte[] initVector, byte[] secretKey) {
 		IvParameterSpec initVectorSpec = new IvParameterSpec(initVector);
-		SecretKeySpec secret = new SecretKeySpec(secretKey, OpenmrsConstants.ENCRYPTION_KEY_SPEC);
+		SecretKeySpec secret = new SecretKeySpec(secretKey, OpenmrsConstants.ENCRYPTION_KEY_SPEC); // &line[SecretKeySpec]
 		String decrypted;
 
 		try {
-			Cipher cipher = Cipher.getInstance(OpenmrsConstants.ENCRYPTION_CIPHER_CONFIGURATION);
-			cipher.init(Cipher.DECRYPT_MODE, secret, initVectorSpec);
-			byte[] original = cipher.doFinal(Base64.getDecoder().decode(text));
+			Cipher cipher = Cipher.getInstance(OpenmrsConstants.ENCRYPTION_CIPHER_CONFIGURATION); // &line[Cipher_getInstance]
+			cipher.init(Cipher.DECRYPT_MODE, secret, initVectorSpec); // &line[cipher_init]
+			byte[] original = cipher.doFinal(Base64.getDecoder().decode(text)); // &line[cipher_doFinal]
 			decrypted = new String(original, StandardCharsets.UTF_8);
 		}
 		catch (GeneralSecurityException e) {
@@ -250,6 +265,7 @@ public class Security {
 
 		return decrypted;
 	}
+	// &end[decrypt]
 
 	/**
 	 * decrypt text using stored initVector and securityKey
@@ -273,16 +289,18 @@ public class Security {
 	 * @return stored init vector byte array
 	 * @since 1.9
 	 */
+	// &begin[getSavedInitVector]
 	public static byte[] getSavedInitVector() {
 		String initVectorText = Context.getRuntimeProperties().getProperty(
 			OpenmrsConstants.ENCRYPTION_VECTOR_RUNTIME_PROPERTY, OpenmrsConstants.ENCRYPTION_VECTOR_DEFAULT);
 
 		if (StringUtils.hasText(initVectorText)) {
-			return Base64.getDecoder().decode(initVectorText);
+			return Base64.getDecoder().decode(initVectorText); // &line[Base64_decode]
 		}
 
 		throw new APIException("no.encryption.initialization.vector.found", (Object[]) null);
 	}
+	// &end[getSavedInitVector]
 
 	/**
 	 * generate a new cipher initialization vector; should only be called once in order to not
@@ -291,6 +309,7 @@ public class Security {
 	 * @return a random array of 16 bytes
 	 * @since 1.9
 	 */
+	// &begin[generateNewInitVector]
 	public static byte[] generateNewInitVector() {
 		// initialize the init vector with 16 random bytes
 		byte[] initVector = new byte[16];
@@ -298,6 +317,7 @@ public class Security {
 
 		return initVector;
 	}
+	// &end[generateNewInitVector]
 
 	/**
 	 * retrieve the secret key from runtime properties
@@ -305,16 +325,18 @@ public class Security {
 	 * @return stored secret key byte array
 	 * @since 1.9
 	 */
+	// &begin[getSavedSecretKey]
 	public static byte[] getSavedSecretKey() {
 		String keyText = Context.getRuntimeProperties().getProperty(OpenmrsConstants.ENCRYPTION_KEY_RUNTIME_PROPERTY,
 			OpenmrsConstants.ENCRYPTION_KEY_DEFAULT);
 
 		if (StringUtils.hasText(keyText)) {
-			return Base64.getDecoder().decode(keyText);
+			return Base64.getDecoder().decode(keyText); // &line[Base64_decode]
 		}
 
 		throw new APIException("no.encryption.secret.key.found", (Object[]) null);
 	}
+	// &end[getSavedSecretKey]
 
 	/**
 	 * generate a new secret key; should only be called once in order to not invalidate all
@@ -323,6 +345,7 @@ public class Security {
 	 * @return generated secret key byte array
 	 * @since 1.9
 	 */
+	// &begin[generateNewSecretKey]
 	public static byte[] generateNewSecretKey() {
 		// Get the KeyGenerator
 		KeyGenerator kgen;
@@ -337,7 +360,8 @@ public class Security {
 		// Generate the secret key specs.
 		SecretKey skey = kgen.generateKey();
 
-		return skey.getEncoded();
+		return skey.getEncoded(); // &line[KeyGeneration_getEncoded_L]
 	}
+	// &end[generateNewSecretKey]
 
 }

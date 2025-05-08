@@ -47,6 +47,7 @@ public class FieldTypeValidator implements Validator {
 	 * <strong>Should</strong> fail validation if field lengths are not correct
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) {
 		FieldType fieldType = (FieldType) obj;
 		if (fieldType == null) {
@@ -62,5 +63,6 @@ public class FieldTypeValidator implements Validator {
 			ValidateUtil.validateFieldLengths(errors, obj.getClass(), "name");
 		}
 	}
+	// &end[validate]
 	
 }

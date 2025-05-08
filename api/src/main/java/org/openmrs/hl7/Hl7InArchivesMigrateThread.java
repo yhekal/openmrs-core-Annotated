@@ -116,7 +116,7 @@ public class Hl7InArchivesMigrateThread extends Thread {
 	@Override
 	public void run() {
 		
-		Context.openSession();
+		Context.openSession(); // &line[openSession]
 		Context.setUserContext(userContext);
 		setTransferStatus(Status.RUNNING);
 		
@@ -150,8 +150,8 @@ public class Hl7InArchivesMigrateThread extends Thread {
 				log.warn("Some error occurred while migrating hl7 archives", e);
 			}
 		}
-		// clean up
-		Context.closeSession();
+		// clean up 
+		Context.closeSession(); // &line[closeSession]
 		setActive(false);
 	}
 	

@@ -127,7 +127,7 @@ public final class Daemon {
 			}
 
 			if (!CollectionUtils.isEmpty(roleNames)) {
-				List<Role> roles = roleNames.stream().map(roleName -> Context.getUserService().getRole(roleName)).collect(Collectors.toList());
+				List<Role> roles = roleNames.stream().map(roleName -> Context.getUserService().getRole(roleName)).collect(Collectors.toList());// &line[getRole]
 				roles.forEach(user::addRole);
 			}
 
@@ -213,7 +213,7 @@ public final class Daemon {
 			public void run() {
 				isDaemonThread.set(true);
 				try {
-					Context.openSession();
+					Context.openSession(); // &line[openSession]
 					countDownLatch.countDown();
 					//Suppressing sonar issue "squid:S1217"
 					//We intentionally do not start a new thread yet, rather wrap the run call in a session.
@@ -221,7 +221,7 @@ public final class Daemon {
 				}
 				finally {
 					try {
-						Context.closeSession();
+						Context.closeSession(); // &line[closeSession]
 					} finally {
 						isDaemonThread.remove();
 						daemonThreadUser.remove();
@@ -347,14 +347,14 @@ public final class Daemon {
 			public void run() {
 				isDaemonThread.set(true);
 				try {
-					Context.openSession();
+					Context.openSession(); // &line[openSession]
 					//Suppressing sonar issue "squid:S1217"
 					//We intentionally do not start a new thread yet, rather wrap the run call in a session.
 					runnable.run();
 				}
 				finally {
 					try {
-						Context.closeSession();
+						Context.closeSession(); // &line[closeSession]
 					} finally {
 						isDaemonThread.remove();
 						daemonThreadUser.remove();
@@ -424,12 +424,12 @@ public final class Daemon {
 		return OpenmrsThreadPoolHolder.threadExecutor.submit(() -> {
 			isDaemonThread.set(true);
 			try {
-				Context.openSession();
+				Context.openSession(); // &line[openSession]
 				return callable.call();
 			}
 			finally {
 				try {
-					Context.closeSession();
+					Context.closeSession(); // &line[closeSession]
 				} finally {
 					isDaemonThread.remove();
 					daemonThreadUser.remove();
@@ -447,13 +447,13 @@ public final class Daemon {
 		Future<?> result = OpenmrsThreadPoolHolder.threadExecutor.submit(() -> {
 			isDaemonThread.set(true);
 			try {
-				Context.openSession();
+				Context.openSession(); // &line[openSession]
 				countDownLatch.countDown();
 				runnable.run();
 			}
 			finally {
 				try {
-					Context.closeSession();
+					Context.closeSession(); // &line[closeSession]
 				} finally {
 					isDaemonThread.remove();
 					daemonThreadUser.remove();

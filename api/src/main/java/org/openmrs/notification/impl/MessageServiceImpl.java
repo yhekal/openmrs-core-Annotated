@@ -214,7 +214,7 @@ public class MessageServiceImpl implements MessageService {
 	@Override
 	public void sendMessage(Message message, String roleName) throws MessageException {
 		log.debug("Sending message to role with name " + roleName);
-		Role role = Context.getUserService().getRole(roleName);
+		Role role = Context.getUserService().getRole(roleName); // &line[getRole]
 		Context.getMessageService().sendMessage(message, role);
 	}
 	

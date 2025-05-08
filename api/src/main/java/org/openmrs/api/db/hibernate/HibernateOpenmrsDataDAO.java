@@ -41,7 +41,7 @@ public class HibernateOpenmrsDataDAO<T extends BaseOpenmrsData> extends Hibernat
 	 */
 	@Override
 	public List<T> getAll(boolean includeVoided) {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = sessionFactory.getCurrentSession(); // &line[getCurrentSession]
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<T> cq = cb.createQuery(mappedClass);
 		Root<T> root = cq.from(mappedClass);
@@ -58,7 +58,7 @@ public class HibernateOpenmrsDataDAO<T extends BaseOpenmrsData> extends Hibernat
 	 */
 	@Override
 	public List<T> getAll(boolean includeVoided, Integer firstResult, Integer maxResults) {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = sessionFactory.getCurrentSession(); // &line[getCurrentSession]
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<T> cq = cb.createQuery(mappedClass);
 		Root<T> root = cq.from(mappedClass);
@@ -88,7 +88,7 @@ public class HibernateOpenmrsDataDAO<T extends BaseOpenmrsData> extends Hibernat
 		if (!includeVoided) {
 			hql += " where voided = false";
 		}
-		Query query = sessionFactory.getCurrentSession().createQuery(hql);
+		Query query = sessionFactory.getCurrentSession().createQuery(hql); // &line[getCurrentSession]
 		
 		Number count = JpaUtils.getSingleResultOrNull(query);
 		

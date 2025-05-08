@@ -221,7 +221,7 @@ public interface UserService extends OpenmrsService {
 	 * <strong>Should</strong> return all roles in the system
 	 */
 	@Authorized(PrivilegeConstants.MANAGE_ROLES)
-	public List<Role> getAllRoles() throws APIException;
+	public List<Role> getAllRoles() throws APIException; // &line[getAllRoles]
 	
 	/**
 	 * Save the given role in the database
@@ -233,7 +233,7 @@ public interface UserService extends OpenmrsService {
 	 * <strong>Should</strong> save given role to the database
 	 */
 	@Authorized( { PrivilegeConstants.MANAGE_ROLES })
-	public Role saveRole(Role role) throws APIException;
+	public Role saveRole(Role role) throws APIException; // &line[saveRole]
 	
 	/**
 	 * Complete remove a role from the database
@@ -245,7 +245,8 @@ public interface UserService extends OpenmrsService {
 	 * <strong>Should</strong> delete given role from database
 	 */
 	@Authorized( { PrivilegeConstants.PURGE_ROLES })
-	public void purgeRole(Role role) throws APIException;
+	public void purgeRole(Role role) throws APIException;  // &line[purgeRole]
+
 	
 	/**
 	 * Save the given privilege in the database
@@ -256,7 +257,7 @@ public interface UserService extends OpenmrsService {
 	 * <strong>Should</strong> save given privilege to the database
 	 */
 	@Authorized( { PrivilegeConstants.MANAGE_PRIVILEGES })
-	public Privilege savePrivilege(Privilege privilege) throws APIException;
+	public Privilege savePrivilege(Privilege privilege) throws APIException;  // &line[savePrivilege]
 	
 	/**
 	 * Completely remove a privilege from the database
@@ -267,7 +268,7 @@ public interface UserService extends OpenmrsService {
 	 * <strong>Should</strong> throw error when privilege is core privilege
 	 */
 	@Authorized( { PrivilegeConstants.PURGE_PRIVILEGES })
-	public void purgePrivilege(Privilege privilege) throws APIException;
+	public void purgePrivilege(Privilege privilege) throws APIException; // &line[purgePrivilege]
 	
 	/**
 	 * Returns role object with given string role
@@ -277,7 +278,7 @@ public interface UserService extends OpenmrsService {
 	 * <strong>Should</strong> fetch role for given role name
 	 */
 	@Authorized(PrivilegeConstants.GET_ROLES)
-	public Role getRole(String r) throws APIException;
+	public Role getRole(String r) throws APIException; // &line[getRole]
 	
 	/**
 	 * Get Role by its UUID
@@ -288,7 +289,7 @@ public interface UserService extends OpenmrsService {
 	 * <strong>Should</strong> return null if no object found with given uuid
 	 */
 	@Authorized(PrivilegeConstants.GET_ROLES)
-	public Role getRoleByUuid(String uuid) throws APIException;
+	public Role getRoleByUuid(String uuid) throws APIException; // &line[getRoleByUuid]
 	
 	/**
 	 * Returns Privilege in the system with given String privilege
@@ -298,7 +299,7 @@ public interface UserService extends OpenmrsService {
 	 * <strong>Should</strong> fetch privilege for given name
 	 */
 	@Authorized(PrivilegeConstants.GET_PRIVILEGES)
-	public Privilege getPrivilege(String p) throws APIException;
+	public Privilege getPrivilege(String p) throws APIException; // &line[getPrivilege]
 	
 	/**
 	 * Get Privilege by its UUID
@@ -310,7 +311,7 @@ public interface UserService extends OpenmrsService {
 	 * <strong>Should</strong> fetch privilege for given uuid
 	 */
 	@Authorized(PrivilegeConstants.GET_PRIVILEGES)
-	public Privilege getPrivilegeByUuid(String uuid) throws APIException;
+	public Privilege getPrivilegeByUuid(String uuid) throws APIException; // &line[getPrivilegeByUuid]
 	
 	/**
 	 * Returns all users in the system
@@ -321,7 +322,7 @@ public interface UserService extends OpenmrsService {
 	 * <strong>Should</strong> not contains any duplicate users
 	 */
 	@Authorized( { PrivilegeConstants.GET_USERS })
-	public List<User> getAllUsers() throws APIException;
+	public List<User> getAllUsers() throws APIException; 
 	
 	/**
 	 * Changes the current user's password.
@@ -337,7 +338,7 @@ public interface UserService extends OpenmrsService {
 	 */
 	@Authorized
 	@Logging(ignoredArgumentIndexes = { 0, 1 })
-	public void changePassword(String oldPassword, String newPassword) throws APIException;
+	public void changePassword(String oldPassword, String newPassword) throws APIException; // &line[changePassword]
 
 	/**
 	 * Changes password of {@link User} passed in
@@ -348,7 +349,7 @@ public interface UserService extends OpenmrsService {
 	 * <strong>Should</strong> not update password of given user when logged in user does not have edit users password privilege
 	 */
 	@Authorized({PrivilegeConstants.EDIT_USER_PASSWORDS})
-	public void changePassword(User user, String newPassword) throws APIException;
+	public void changePassword(User user, String newPassword) throws APIException; // &line[changePassword]
 	
 	/**
 	 * Changes the current user's password directly. This is most useful if migrating users from
@@ -363,7 +364,7 @@ public interface UserService extends OpenmrsService {
 	 * <strong>Should</strong> change the hashed password for the given user
 	 */
 	@Authorized( { PrivilegeConstants.EDIT_USER_PASSWORDS })
-	public void changeHashedPassword(User user, String hashedPassword, String salt) throws APIException;
+	public void changeHashedPassword(User user, String hashedPassword, String salt) throws APIException; // &line[changeHashedPassword]
 	
 	/**
 	 * Changes the passed user's secret question and answer.
@@ -377,7 +378,7 @@ public interface UserService extends OpenmrsService {
 	 */
 	@Authorized( { PrivilegeConstants.EDIT_USER_PASSWORDS })
 	@Logging(ignoredArgumentIndexes = { 1, 2 })
-	public void changeQuestionAnswer(User u, String question, String answer) throws APIException;
+	public void changeQuestionAnswer(User u, String question, String answer) throws APIException; // &line[changeQuestionAnswer]
 	
 	/**
 	 * Changes the current user's secret question and answer.
@@ -391,7 +392,7 @@ public interface UserService extends OpenmrsService {
 	 */
 	@Authorized
 	@Logging(ignoreAllArgumentValues = true)
-	public void changeQuestionAnswer(String pw, String q, String a) throws APIException;
+	public void changeQuestionAnswer(String pw, String q, String a) throws APIException; // &line[changeQuestionAnswer]
 	
 	/**
 	 * Returns secret question for the given user.
@@ -401,7 +402,7 @@ public interface UserService extends OpenmrsService {
 	 * @throws APIException
 	 * @since 2.0
 	 */
-	public String getSecretQuestion(User user) throws APIException;
+	public String getSecretQuestion(User user) throws APIException; // &line[getSecretQuestion]
 	
 	/**
 	 * Compares <code>answer</code> against the <code>user</code>'s secret answer.
@@ -413,7 +414,7 @@ public interface UserService extends OpenmrsService {
 	 * <strong>Should</strong> return false when given answer does not match the stored secret answer
 	 */
 	@Logging(ignoredArgumentIndexes = { 1 })
-	public boolean isSecretAnswer(User u, String answer) throws APIException;
+	public boolean isSecretAnswer(User u, String answer) throws APIException; // &line[isSecretAnswer]
 	
 	/**
 	 * Return a list of users sorted by personName (see {@link PersonByNameComparator}) if any part
@@ -567,14 +568,14 @@ public interface UserService extends OpenmrsService {
 	 * <strong>Should</strong> not update password if secret is not correct
 	 */
 	@Authorized
-	public void changePasswordUsingSecretAnswer(String secretAnswer, String pw) throws APIException;
+	public void changePasswordUsingSecretAnswer(String secretAnswer, String pw) throws APIException;  // &line[changePasswordUsingSecretAnswer]
 	
 	/**
 	 * Sets a user's activation key
 	 * @param user The user for which the activation key will be set
 	 */
 	@Authorized(PrivilegeConstants.EDIT_USER_PASSWORDS)
-	public User setUserActivationKey(User user) throws MessageException;
+	public User setUserActivationKey(User user) throws MessageException; // &line[setUserActivationKey]
 	
 	/**
 	 * Change user password given the activation key
@@ -582,7 +583,7 @@ public interface UserService extends OpenmrsService {
 	 * @param activationKey the activation for password reset
 	 * @param newPassword the new password
 	 */
-	public void changePasswordUsingActivationKey(String activationKey, String newPassword);
+	public void changePasswordUsingActivationKey(String activationKey, String newPassword); // &line[changePasswordUsingActivationKey]
 
 	/**
 	 * @param user the User whose Locale to retrieve

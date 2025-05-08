@@ -280,14 +280,16 @@ public class TestInstallUtil {
 		result.setDoOutput(true);
 		return result;
 	}
+	// &begin[encodeCredentials]
 	private static String encodeCredentials(String openmrsUsername, String openmrsPassword) {
 		final StringBuilder result = new StringBuilder();
 		result.append("username=");
-		final Encoder encoder = Base64.getEncoder();
+		final Encoder encoder = Base64.getEncoder();  // &line[Base64_getEncoder]
 		final Charset utf8 = StandardCharsets.UTF_8;
-		result.append(new String(encoder.encode(openmrsUsername.getBytes(utf8)), utf8));
+		result.append(new String(encoder.encode(openmrsUsername.getBytes(utf8)), utf8)); // &line[Base64_encode]
 		result.append("&password=");
-		result.append(new String(encoder.encode(openmrsPassword.getBytes(utf8)), utf8));
+		result.append(new String(encoder.encode(openmrsPassword.getBytes(utf8)), utf8)); // &line[Base64_encode]
 		return result.toString();
 	}
+	// &end[encodeCredentials]
 }

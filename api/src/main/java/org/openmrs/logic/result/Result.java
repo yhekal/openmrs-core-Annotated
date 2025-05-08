@@ -818,6 +818,7 @@ public class Result extends ArrayList<Result> {
 	}
 	
 	@Override
+		// &begin[hashCode]
 	public int hashCode() {
 		if (isSingleResult()) {
 			return new HashCodeBuilder().append(datatype).hashCode();
@@ -825,6 +826,7 @@ public class Result extends ArrayList<Result> {
 			return super.hashCode();
 		}
 	}
+	// &end[hashCode]
 	
 	/**
 	 * @return the <em>index</em> element of a list. If the result is not a list, then this will

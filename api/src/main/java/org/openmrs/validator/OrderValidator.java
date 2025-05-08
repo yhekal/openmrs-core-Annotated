@@ -65,6 +65,7 @@ public class OrderValidator implements Validator {
 	 * <strong>Should</strong> fail validation if field lengths are not correct
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) {
 		Order order = (Order) obj;
 		if (order == null) {
@@ -93,14 +94,16 @@ public class OrderValidator implements Validator {
 			validateOrderGroupPatient(order, errors);
 		}
 	}
-	
+	// &end[validate]
+	// &begin[validateOrderTypeClass]
 	private void validateOrderTypeClass(Order order, Errors errors) {
 		OrderType orderType = order.getOrderType();
 		if (orderType != null && !orderType.getJavaClass().isAssignableFrom(order.getClass())) {
 			errors.rejectValue("orderType", "Order.error.orderTypeClassMismatchesOrderClass");
 		}
 	}
-	
+	// &end[validateOrderTypeClass]
+	// &begin[validateDateActivated]
 	private void validateDateActivated(Order order, Errors errors) {
 		Date dateActivated = order.getDateActivated();
 		if (dateActivated != null) {
@@ -125,14 +128,16 @@ public class OrderValidator implements Validator {
 			}
 		}
 	}
-	
+	// &end[validateDateActivated]
+	// &begin[validateSamePatientInOrderAndEncounter]
 	private void validateSamePatientInOrderAndEncounter(Order order, Errors errors) {
 		if (order.getEncounter() != null && order.getPatient() != null
 				&& !order.getEncounter().getPatient().equals(order.getPatient())) {
 			errors.rejectValue("encounter", "Order.error.encounterPatientMismatch");
 		}
 	}
-	
+	// &end[validateSamePatientInOrderAndEncounter]
+	// &begin[validateScheduledDate]
 	private void validateScheduledDate(Order order, Errors errors) {
 		boolean isUrgencyOnScheduledDate = (order.getUrgency() != null && order.getUrgency().equals(
 		    Order.Urgency.ON_SCHEDULED_DATE));
@@ -143,16 +148,19 @@ public class OrderValidator implements Validator {
 			errors.rejectValue("scheduledDate", "Order.error.scheduledDateNullForOnScheduledDateUrgency");
 		}
 	}
-	
+	// &end[validateScheduledDate]
+	// &begin[validateOrderGroupEncounter]
 	private void validateOrderGroupEncounter(Order order, Errors errors) {
 		if (order.getOrderGroup() != null && !(order.getEncounter().equals(order.getOrderGroup().getEncounter()))) {
 			errors.rejectValue("encounter", "Order.error.orderEncounterAndOrderGroupEncounterMismatch");
 		}
 	}
-	
+	// &end[validateOrderGroupEncounter]
+	// &begin[validateOrderGroupPatient]
 	private void validateOrderGroupPatient(Order order, Errors errors) {
 		if (order.getOrderGroup() != null && !(order.getPatient().equals(order.getOrderGroup().getPatient()))) {
 			errors.rejectValue("patient", "Order.error.orderPatientAndOrderGroupPatientMismatch");
 		}
 	}
+	// &end[validateOrderGroupPatient]
 }

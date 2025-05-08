@@ -93,7 +93,7 @@ public class UserContext implements Serializable {
 	 * @since 2.3.0
 	 */
 	public UserContext(AuthenticationScheme authenticationScheme) {
-		this.authenticationScheme = authenticationScheme;
+		this.authenticationScheme = authenticationScheme;  // &line[authenticationScheme]
 	}
 	
 	/**
@@ -104,15 +104,16 @@ public class UserContext implements Serializable {
 	 * @throws ContextAuthenticationException if authentication fails
 	 * @since 2.3.0
 	 */
+	// &begin[authenticate]
 	public Authenticated authenticate(Credentials credentials)
 		throws ContextAuthenticationException {
 		
 		log.debug("Authenticating client '{}' with scheme '{}'", credentials.getClientName(),
-			credentials.getAuthenticationScheme());
+			credentials.getAuthenticationScheme()); // &line[getAuthenticationScheme]
 		
 		Authenticated authenticated = null;
 		try {
-			authenticated = authenticationScheme.authenticate(credentials);
+			authenticated = authenticationScheme.authenticate(credentials); // &line[authenticate]
 			this.user = authenticated.getUser();
 			notifyUserSessionListener(this.user, Event.LOGIN, Status.SUCCESS);
 		}
@@ -130,6 +131,7 @@ public class UserContext implements Serializable {
 		
 		return authenticated;
 	}
+	// &end[authenticate]
 	
 	/**
 	 * Refresh the authenticated user object in this UserContext. This should be used when updating
@@ -138,6 +140,7 @@ public class UserContext implements Serializable {
 	 *
 	 * @since 1.5
 	 */
+	// &begin[refreshAuthenticatedUser]
 	public void refreshAuthenticatedUser() {
 		log.debug("Refreshing authenticated user");
 		
@@ -148,6 +151,7 @@ public class UserContext implements Serializable {
 			setUserLocale(false);
 		}
 	}
+	// &begin[refreshAuthenticatedUser]
 	
 	/**
 	 * Change current authentication to become another user. (You can only do this if you're already
@@ -213,6 +217,7 @@ public class UserContext implements Serializable {
 	 *
 	 * @see #authenticate
 	 */
+	// &begin[logout]
 	public void logout() {
 		log.debug("setting user to null on logout");
 		notifyUserSessionListener(user, Event.LOGOUT, Status.SUCCESS);
@@ -221,6 +226,7 @@ public class UserContext implements Serializable {
 		locale = null;
 		proxies.clear();
 	}
+	// &end[logout]
 	
 	/**
 	 * Gives the given privilege to all calls to hasPrivilege. This method was visualized as being
@@ -285,9 +291,11 @@ public class UserContext implements Serializable {
 	 * @return all expanded roles for a user
 	 * @throws Exception
 	 */
+// &begin[getAllRoles]
 	public Set<Role> getAllRoles() throws Exception {
-		return getAllRoles(getAuthenticatedUser());
+		return getAllRoles(getAuthenticatedUser()); // &line[getAllRoles]
 	}
+	// &end[getAllRoles]
 	
 	/**
 	 * Gets all the roles for a user. Anonymous and Authenticated roles are appended if necessary
@@ -299,6 +307,7 @@ public class UserContext implements Serializable {
 	 * <strong>Should</strong> add authenticated role to all authenticated users
 	 * <strong>Should</strong> return same roles as user getAllRoles method
 	 */
+// &begin[getAllRoles]
 	public Set<Role> getAllRoles(User user) throws Exception {
 		Set<Role> roles = new HashSet<>();
 		
@@ -313,6 +322,7 @@ public class UserContext implements Serializable {
 		
 		return roles;
 	}
+	// &end[getAllRoles]
 	
 	/**
 	 * Tests whether currently authenticated user has a particular privilege
@@ -328,6 +338,7 @@ public class UserContext implements Serializable {
 	 * <strong>Should</strong> not authorize if proxied user does not have specified privilege
 	 * <strong>Should</strong> not authorize if anonymous user does not have specified privilege
 	 */
+	// &begin[hasPrivilege]
 	public boolean hasPrivilege(String privilege) {
 		log.debug("Checking '{}' against proxies: {}", privilege, proxies);
 		// check proxied privileges
@@ -357,7 +368,7 @@ public class UserContext implements Serializable {
 		notifyPrivilegeListeners(getAuthenticatedUser(), privilege, false);
 		return false;
 	}
-	
+	// &end[hasPrivilege]
 	/**
 	 * Convenience method to get the Role in the system designed to be given to all users
 	 *
@@ -369,7 +380,7 @@ public class UserContext implements Serializable {
 			return anonymousRole;
 		}
 		
-		anonymousRole = Context.getUserService().getRole(RoleConstants.ANONYMOUS);
+		anonymousRole = Context.getUserService().getRole(RoleConstants.ANONYMOUS); // &line[getRole]
 		if (anonymousRole == null) {
 			throw new RuntimeException(
 				"Database out of sync with code: " + RoleConstants.ANONYMOUS + " role does not exist");
@@ -385,6 +396,7 @@ public class UserContext implements Serializable {
 	 * @return Role
 	 * <strong>Should</strong> fail if database doesn't contain authenticated role
 	 */
+// &begin[getAuthenticatedRole]
 	private Role getAuthenticatedRole() {
 		if (authenticatedRole != null) {
 			return authenticatedRole;
@@ -398,6 +410,7 @@ public class UserContext implements Serializable {
 		
 		return authenticatedRole;
 	}
+	// &end[getAuthenticatedRole]
 	
 	/**
 	 * @return locationId for this user context if any is set

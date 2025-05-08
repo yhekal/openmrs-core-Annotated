@@ -38,11 +38,13 @@ public class LocationTagValidator implements Validator {
 	 * <strong>Should</strong> fail validation if field lengths are not correct
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object target, Errors errors) {
 		if (target != null) {
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "LocationTag.error.name.required");
 			ValidateUtil.validateFieldLengths(errors, target.getClass(), "name", "description", "retireReason");
 		}
 	}
+	// &end[validate]
 	
 }

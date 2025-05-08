@@ -60,6 +60,7 @@ public class PersonValidator implements Validator {
 	 * <strong>Should</strong> fail validation if field lengths are not correct
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object target, Errors errors) {
 		log.debug("{}.validate...", this.getClass().getName());
 		
@@ -87,16 +88,18 @@ public class PersonValidator implements Validator {
 		
 		ValidateUtil.validateFieldLengths(errors, Person.class, "gender", "personVoidReason");
 	}
-	
+	// &end[validate]
 	/**
 	 * Checks if a person contains any non voided PersonName attribute
 	 *
 	 * @param person The person that is analysed for voided names
 	 * @return true if at leas one personName is not voided
 	 */
+	// &begin[validatePersonHasAtLeastOneNonVoidedName]
 	private boolean validatePersonHasAtLeastOneNonVoidedName(Person person) {
 			return person.getNames().stream().anyMatch(personName -> !personName.getVoided());
 	}
+	// &end[validatePersonHasAtLeastOneNonVoidedName]
 	
 	/**
 	 * Checks if the names of a person fulfill the expected criteria  
@@ -104,6 +107,7 @@ public class PersonValidator implements Validator {
 	 * @param person The person whose names should be validated
 	 * @param errors Stores information about errors encountered during validation.
 	 */
+	// &begin[validatePersonNames]
 	private void validatePersonNames(Person person, Errors errors) {
 		int index = 0;
 		for (PersonName personName : person.getNames()) {
@@ -113,6 +117,7 @@ public class PersonValidator implements Validator {
 			index++;
 		}
 	}
+	// &end[validatePersonNames]
 	
 	/**
 	 * Checks if the addresses of a person fulfill the expected criteria  
@@ -120,6 +125,7 @@ public class PersonValidator implements Validator {
 	 * @param person The person whose addresses should be validated
 	 * @param errors Stores information about errors encountered during validation.
 	 */
+	// &begin[validatePersonAddresses]
 	private void validatePersonAddresses(Person person, Errors errors) {
 		int index = 0;
 		for (PersonAddress address : person.getAddresses()) {
@@ -133,6 +139,7 @@ public class PersonValidator implements Validator {
 			}
 		}
 	}
+	// &end[validatePersonAddresses]
 	
 	/**
 	 * Checks if the death cause and death cause non coded fulfill the business logic
@@ -140,6 +147,7 @@ public class PersonValidator implements Validator {
 	 * @param person The person whose death attributes should be validated.
 	 * @param errors Stores information about errors encountered during validation.
 	 */
+	// &begin[validateDeathCause]
 	private void validateDeathCause(Person person, Errors errors){
 		if (person.getDead()) {
 			if(person.getCauseOfDeath() != null && person.getCauseOfDeathNonCoded() != null) {
@@ -150,6 +158,7 @@ public class PersonValidator implements Validator {
 			}
 		}
 	}
+	// &end[validateDeathCause]
 	
 	/**
 	 * Checks if the birth date specified is in the future or older than 140 years old..
@@ -157,6 +166,7 @@ public class PersonValidator implements Validator {
 	 * @param birthDate The birthdate to validate.
 	 * @param errors Stores information about errors encountered during validation.
 	 */
+	// &begin[validateBirthDate]
 	private void validateBirthDate(Errors errors, Date birthDate) {
 		if (birthDate == null) {
 			return;
@@ -164,6 +174,7 @@ public class PersonValidator implements Validator {
 		rejectIfFutureDate(errors, birthDate, "birthdate");
 		rejectDateIfBefore140YearsAgo(errors, birthDate, "birthdate");
 	}
+	// &end[validateBirthDate]
 	
 	/**
 	 * Checks if the death date is in the future.
@@ -171,6 +182,7 @@ public class PersonValidator implements Validator {
 	 * @param errors Stores information about errors encountered during validation
 	 * @param deathDate the deathdate to validate
 	 */
+	// &begin[validateDeathDate]
 	private void validateDeathDate(Errors errors, Date deathDate, Date birthDate) {
 		if (deathDate == null) {
 			return;
@@ -181,6 +193,7 @@ public class PersonValidator implements Validator {
 		}
 		rejectDeathDateIfBeforeBirthDate(errors, deathDate, birthDate);
 	}
+	// &end[validateDeathDate]
 	
 	/**
 	 * Rejects a date if it is in the future.

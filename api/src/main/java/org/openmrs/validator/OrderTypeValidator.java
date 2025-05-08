@@ -56,6 +56,7 @@ public class OrderTypeValidator implements Validator {
 	 * <strong>Should</strong> fail validation if field lengths are not correct
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) {
 		if (obj == null || !(obj instanceof OrderType)) {
 			throw new IllegalArgumentException("The parameter obj should not be null and must be of type" + OrderType.class);
@@ -98,4 +99,5 @@ public class OrderTypeValidator implements Validator {
 			        .validateFieldLengths(errors, obj.getClass(), "name", "description", "retireReason", "javaClassName");
 		}
 	}
+	// &end[validate]
 }

@@ -93,7 +93,7 @@ public class NameSupport extends LayoutSupport<NameTemplate> implements GlobalPr
 			return null;
 		}
 		try {
-			nameTemplate = Context.getSerializationService().getDefaultSerializer().deserialize(StringEscapeUtils.unescapeXml(xml),
+			nameTemplate = Context.getSerializationService().getDefaultSerializer().deserialize(StringEscapeUtils.unescapeXml(xml), // &line[unescapeXml]
 				NameTemplate.class);
 		} catch (Exception e) {
 			log.error("Error in deserializing provided name template", e);

@@ -43,26 +43,26 @@ public class HibernateTemplateDAO implements TemplateDAO {
 	@SuppressWarnings("unchecked")
 	public List<Template> getTemplates() {
 		log.info("Getting all templates from the database");
-		return sessionFactory.getCurrentSession().createQuery("from Template").list();
+		return sessionFactory.getCurrentSession().createQuery("from Template").list(); // &line[getCurrentSession]
 	}
 	
 	@Override
 	public Template getTemplate(Integer id) {
 		log.info("Get template " + id);
-		return (Template) sessionFactory.getCurrentSession().get(Template.class, id);
+		return (Template) sessionFactory.getCurrentSession().get(Template.class, id); // &line[getCurrentSession]
 	}
 	
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Template> getTemplatesByName(String name) {
 		log.info("Get template " + name);
-		return sessionFactory.getCurrentSession().createQuery("from Template as template where template.name = ?")
+		return sessionFactory.getCurrentSession().createQuery("from Template as template where template.name = ?") // &line[getCurrentSession]
 		        .setString(0, name).list();
 	}
 	
 	@Override
 	public void createTemplate(Template template) throws DAOException {
-		sessionFactory.getCurrentSession().saveOrUpdate(template);
+		sessionFactory.getCurrentSession().saveOrUpdate(template); // &line[getCurrentSession]
 	}
 	
 	@Override
@@ -70,14 +70,14 @@ public class HibernateTemplateDAO implements TemplateDAO {
 		if (template.getId() == null) {
 			createTemplate(template);
 		} else {
-			template = (Template) sessionFactory.getCurrentSession().merge(template);
-			sessionFactory.getCurrentSession().saveOrUpdate(template);
+			template = (Template) sessionFactory.getCurrentSession().merge(template); // &line[getCurrentSession]
+			sessionFactory.getCurrentSession().saveOrUpdate(template); // &line[getCurrentSession]
 		}
 	}
 	
 	@Override
 	public void deleteTemplate(Template template) throws DAOException {
-		sessionFactory.getCurrentSession().delete(template);
+		sessionFactory.getCurrentSession().delete(template); // &line[getCurrentSession]
 	}
 	
 }

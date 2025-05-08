@@ -65,6 +65,7 @@ public class ConceptReferenceTermValidator implements Validator {
 	 * <strong>Should</strong> pass validation if the duplicate concept reference term is retired
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) throws APIException {
 		
 		if (obj == null || !(obj instanceof ConceptReferenceTerm)) {
@@ -141,4 +142,5 @@ public class ConceptReferenceTermValidator implements Validator {
 		}
 		ValidateUtil.validateFieldLengths(errors, obj.getClass(), "name", "code", "version", "description", "retireReason");
 	}
+	// &end[validate]
 }

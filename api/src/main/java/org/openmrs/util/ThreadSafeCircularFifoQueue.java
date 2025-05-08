@@ -45,8 +45,8 @@ public class ThreadSafeCircularFifoQueue<E> extends AbstractQueue<E> implements 
 
 	// Underlying storage
 	private final E[] elements;
-
-	private transient ReentrantLock lock = new ReentrantLock();
+	
+	private transient ReentrantLock lock = new ReentrantLock();  // &line[ReentrantLock]
 
 	// index of the "start" of the queue, i.e., where data is read from
 	private int read = 0;
@@ -85,14 +85,14 @@ public class ThreadSafeCircularFifoQueue<E> extends AbstractQueue<E> implements 
 	@Override
 	public boolean add(E e) {
 		Objects.requireNonNull(e);
-
-		final ReentrantLock lock = this.lock;
-		lock.lock();
+		
+		final ReentrantLock lock = this.lock; // &line[ReentrantLock]
+		lock.lock(); // &line[ReentrantLock_lock]
 		try {
 			internalAdd(e);
 		}
 		finally {
-			lock.unlock();
+			lock.unlock(); // &line[ReentrantLock_unlock]
 		}
 
 		return true;
@@ -101,17 +101,17 @@ public class ThreadSafeCircularFifoQueue<E> extends AbstractQueue<E> implements 
 	@Override
 	public boolean addAll(Collection<? extends E> c) {
 		Objects.requireNonNull(c);
-
-		final ReentrantLock lock = this.lock;
-		lock.lock();
+		
+		final ReentrantLock lock = this.lock; // &line[ReentrantLock]
+		lock.lock(); // &line[ReentrantLock_lock]
 		try {
 			for (E e : c) {
 				Objects.requireNonNull(e);
-				internalAdd(e);
+				internalAdd(e); 
 			}
 		}
 		finally {
-			lock.unlock();
+			lock.unlock(); // &line[ReentrantLock_unlock]
 		}
 
 		return true;
@@ -120,8 +120,8 @@ public class ThreadSafeCircularFifoQueue<E> extends AbstractQueue<E> implements 
 	@Override
 	public void clear() {
 		final E[] elements = this.elements;
-		final ReentrantLock lock = this.lock;
-		lock.lock();
+		final ReentrantLock lock = this.lock; // &line[ReentrantLock]
+		lock.lock(); // &line[ReentrantLock_lock]
 		try {
 			if (size > 0) {
 				int idx = read;
@@ -135,7 +135,7 @@ public class ThreadSafeCircularFifoQueue<E> extends AbstractQueue<E> implements 
 			}
 		}
 		finally {
-			lock.unlock();
+			lock.unlock(); // &line[ReentrantLock_unlock]
 		}
 	}
 
@@ -144,14 +144,14 @@ public class ThreadSafeCircularFifoQueue<E> extends AbstractQueue<E> implements 
 		if (null == o) {
 			return false;
 		}
-
-		final ReentrantLock lock = this.lock;
-		lock.lock();
+		
+		final ReentrantLock lock = this.lock; // &line[ReentrantLock]
+		lock.lock(); // &line[ReentrantLock_lock]
 		try {
 			return internalContains(o);
 		}
 		finally {
-			lock.unlock();
+			lock.unlock(); // &line[ReentrantLock_unlock]
 		}
 	}
 
@@ -160,9 +160,9 @@ public class ThreadSafeCircularFifoQueue<E> extends AbstractQueue<E> implements 
 		if (c == null || c.isEmpty()) {
 			return true;
 		}
-
-		final ReentrantLock lock = this.lock;
-		lock.lock();
+		
+		final ReentrantLock lock = this.lock; // &line[ReentrantLock]
+		lock.lock(); // &line[ReentrantLock_lock]
 		try {
 			for (Object o : c) {
 				if (!internalContains(o)) {
@@ -173,14 +173,14 @@ public class ThreadSafeCircularFifoQueue<E> extends AbstractQueue<E> implements 
 			return true;
 		}
 		finally {
-			lock.unlock();
+			lock.unlock(); // &line[ReentrantLock_unlock]
 		}
 	}
 
 	@Override
 	public E element() {
-		final ReentrantLock lock = this.lock;
-		lock.lock();
+		final ReentrantLock lock = this.lock; // &line[ReentrantLock]
+		lock.lock(); // &line[ReentrantLock_lock]
 		try {
 			if (size == 0) {
 				throw new NoSuchElementException("queue is empty");
@@ -189,7 +189,7 @@ public class ThreadSafeCircularFifoQueue<E> extends AbstractQueue<E> implements 
 			return elements[read];
 		}
 		finally {
-			lock.unlock();
+			lock.unlock(); // &line[ReentrantLock_unlock]
 		}
 
 	}
@@ -201,13 +201,13 @@ public class ThreadSafeCircularFifoQueue<E> extends AbstractQueue<E> implements 
 
 	@Override
 	public boolean isEmpty() {
-		final ReentrantLock lock = this.lock;
-		lock.lock();
+		final ReentrantLock lock = this.lock; // &line[ReentrantLock]
+		lock.lock(); // &line[ReentrantLock_lock]
 		try {
 			return size == 0;
 		}
 		finally {
-			lock.unlock();
+			lock.unlock(); // &line[ReentrantLock_unlock]
 		}
 	}
 
@@ -218,32 +218,32 @@ public class ThreadSafeCircularFifoQueue<E> extends AbstractQueue<E> implements 
 
 	@Override
 	public E peek() {
-		final ReentrantLock lock = this.lock;
-		lock.lock();
+		final ReentrantLock lock = this.lock; // &line[ReentrantLock]
+		lock.lock(); // &line[ReentrantLock_lock]
 		try {
 			return size == 0 ? null : elements[read];
 		}
 		finally {
-			lock.unlock();
+			lock.unlock(); // &line[ReentrantLock_unlock]
 		}
 	}
 
 	@Override
 	public E poll() {
-		final ReentrantLock lock = this.lock;
-		lock.lock();
+		final ReentrantLock lock = this.lock; // &line[ReentrantLock]
+		lock.lock(); // &line[ReentrantLock_lock]
 		try {
 			return size == 0 ? null : internalRemove();
 		}
 		finally {
-			lock.unlock();
+			lock.unlock(); // &line[ReentrantLock_unlock]
 		}
 	}
 
 	@Override
 	public E remove() {
-		final ReentrantLock lock = this.lock;
-		lock.lock();
+		final ReentrantLock lock = this.lock; // &line[ReentrantLock]
+		lock.lock(); // &line[ReentrantLock_lock]
 		try {
 			if (size == 0) {
 				throw new NoSuchElementException("queue is empty");
@@ -252,7 +252,7 @@ public class ThreadSafeCircularFifoQueue<E> extends AbstractQueue<E> implements 
 			return internalRemove();
 		}
 		finally {
-			lock.unlock();
+			lock.unlock(); // &line[ReentrantLock_unlock]
 		}
 	}
 
@@ -261,9 +261,9 @@ public class ThreadSafeCircularFifoQueue<E> extends AbstractQueue<E> implements 
 		if (null == o) {
 			return false;
 		}
-
-		final ReentrantLock lock = this.lock;
-		lock.lock();
+		
+		final ReentrantLock lock = this.lock; // &line[ReentrantLock]
+		lock.lock(); // &line[ReentrantLock_lock]
 		try {
 			if (size == 0) {
 				return false;
@@ -282,47 +282,47 @@ public class ThreadSafeCircularFifoQueue<E> extends AbstractQueue<E> implements 
 			return false;
 		}
 		finally {
-			lock.unlock();
+			lock.unlock(); // &line[ReentrantLock_unlock]
 		}
 	}
 
 	@Override
 	public boolean removeAll(Collection<?> c) {
 		Objects.requireNonNull(c);
-
-		final ReentrantLock lock = this.lock;
-		lock.lock();
+		
+		final ReentrantLock lock = this.lock; // &line[ReentrantLock]
+		lock.lock(); // &line[ReentrantLock_lock]
 		try {
 			return removeIf(c::contains);
 		}
 		finally {
-			lock.unlock();
+			lock.unlock(); // &line[ReentrantLock_unlock]
 		}
 	}
 
 	@Override
 	public boolean retainAll(Collection<?> c) {
 		Objects.requireNonNull(c);
-
-		final ReentrantLock lock = this.lock;
-		lock.lock();
+		
+		final ReentrantLock lock = this.lock; // &line[ReentrantLock]
+		lock.lock(); // &line[ReentrantLock_lock]
 		try {
 			return removeIf(o -> !c.contains(o));
 		}
 		finally {
-			lock.unlock();
+			lock.unlock(); // &line[ReentrantLock_unlock]
 		}
 	}
 
 	@Override
 	public int size() {
-		final ReentrantLock lock = this.lock;
-		lock.lock();
+		final ReentrantLock lock = this.lock; // &line[ReentrantLock]
+		lock.lock(); // &line[ReentrantLock_lock]
 		try {
 			return size;
 		}
 		finally {
-			lock.unlock();
+			lock.unlock(); // &line[ReentrantLock_unlock]
 		}
 	}
 
@@ -335,9 +335,9 @@ public class ThreadSafeCircularFifoQueue<E> extends AbstractQueue<E> implements 
 	@SuppressWarnings("unchecked")
 	public <T> T[] toArray(T[] a) {
 		Objects.requireNonNull(a);
-
-		final ReentrantLock lock = this.lock;
-		lock.lock();
+		
+		final ReentrantLock lock = this.lock; // &line[ReentrantLock]
+		lock.lock(); // &line[ReentrantLock_lock]
 		try {
 			final int size = this.size;
 			final T[] result = a.length < size ? (T[]) Array.newInstance(a.getClass().getComponentType(), size) : a;
@@ -359,13 +359,13 @@ public class ThreadSafeCircularFifoQueue<E> extends AbstractQueue<E> implements 
 			return result;
 		}
 		finally {
-			lock.unlock();
+			lock.unlock(); // &line[ReentrantLock_unlock]
 		}
 	}
 
 	public String toString() {
-		final ReentrantLock lock = this.lock;
-		lock.lock();
+		final ReentrantLock lock = this.lock; // &line[ReentrantLock]
+		lock.lock(); // &line[ReentrantLock_lock]
 		try {
 			if (size == 0) {
 				return "[]";
@@ -389,7 +389,7 @@ public class ThreadSafeCircularFifoQueue<E> extends AbstractQueue<E> implements 
 			}
 		}
 		finally {
-			lock.unlock();
+			lock.unlock(); // &line[ReentrantLock_unlock]
 		}
 	}
 
@@ -474,7 +474,7 @@ public class ThreadSafeCircularFifoQueue<E> extends AbstractQueue<E> implements 
 
 	private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
 		in.defaultReadObject();
-		lock = new ReentrantLock();
+		lock = new ReentrantLock(); // &line[ReentrantLock]
 	}
 
 	/**
@@ -662,8 +662,8 @@ public class ThreadSafeCircularFifoQueue<E> extends AbstractQueue<E> implements 
 		private int prevCycles;
 
 		Iterator() {
-			final ReentrantLock lock = ThreadSafeCircularFifoQueue.this.lock;
-			lock.lock();
+			final ReentrantLock lock = ThreadSafeCircularFifoQueue.this.lock; // &line[ReentrantLock]
+			lock.lock(); // &line[ReentrantLock_lock]
 			try {
 				if (size == 0) {
 					nextIndex = NONE;
@@ -684,7 +684,7 @@ public class ThreadSafeCircularFifoQueue<E> extends AbstractQueue<E> implements 
 				}
 			}
 			finally {
-				lock.unlock();
+				lock.unlock();// &line[ReentrantLock_unlock]
 			}
 		}
 
@@ -694,9 +694,9 @@ public class ThreadSafeCircularFifoQueue<E> extends AbstractQueue<E> implements 
 			if (nextItem != null) {
 				return true;
 			}
-
-			final ReentrantLock lock = ThreadSafeCircularFifoQueue.this.lock;
-			lock.lock();
+			
+			final ReentrantLock lock = ThreadSafeCircularFifoQueue.this.lock; // &line[ReentrantLock]
+			lock.lock(); // &line[ReentrantLock_lock]
 			try {
 				if (!isDetached()) {
 					updateIndices();
@@ -707,7 +707,7 @@ public class ThreadSafeCircularFifoQueue<E> extends AbstractQueue<E> implements 
 				}
 			}
 			finally {
-				lock.unlock();
+				lock.unlock(); // &line[ReentrantLock_unlock]
 			}
 			
 			return false;
@@ -719,9 +719,9 @@ public class ThreadSafeCircularFifoQueue<E> extends AbstractQueue<E> implements 
 			if (it == null) {
 				throw new NoSuchElementException();
 			}
-
-			final ReentrantLock lock = ThreadSafeCircularFifoQueue.this.lock;
-			lock.lock();
+			
+			final ReentrantLock lock = ThreadSafeCircularFifoQueue.this.lock; // &line[ReentrantLock]
+			lock.lock(); // &line[ReentrantLock_lock]
 			try {
 				if (!isDetached()) {
 					updateIndices();
@@ -741,14 +741,14 @@ public class ThreadSafeCircularFifoQueue<E> extends AbstractQueue<E> implements 
 				return it;
 			}
 			finally {
-				lock.unlock();
+				lock.unlock(); // &line[ReentrantLock_unlock]
 			}
 		}
 
 		@Override
 		public void remove() {
-			final ReentrantLock lock = ThreadSafeCircularFifoQueue.this.lock;
-			lock.lock();
+			final ReentrantLock lock = ThreadSafeCircularFifoQueue.this.lock; // &line[ReentrantLock]
+			lock.lock(); // &line[ReentrantLock_lock]
 			try {
 				if (!isDetached()) {
 					updateIndices();
@@ -772,7 +772,7 @@ public class ThreadSafeCircularFifoQueue<E> extends AbstractQueue<E> implements 
 				}
 			}
 			finally {
-				lock.unlock();
+				lock.unlock(); // &line[ReentrantLock_unlock]
 			}
 		}
 

@@ -655,13 +655,13 @@ public class UserServiceTest extends BaseContextSensitiveTest {
 	@Test
 	public void changeHashedPassword_shouldChangeTheHashedPasswordForTheGivenUser() {
 		User user = userService.getUser(1);
-		String salt = Security.getRandomToken();
-		String hash = Security.encodeString("new password" + salt);
-		userService.changeHashedPassword(user, hash, salt);
+		String salt = Security.getRandomToken(); 
+		String hash = Security.encodeString("new password" + salt); 
+		userService.changeHashedPassword(user, hash, salt); 
 
 		// TODO Review this a little further
 		// This is the assert - checks to see if current user can use the new password
-		userService.changePassword("new password", "Another new password1"); // try to change the password with the new one
+		userService.changePassword("new password", "Another new password1");// try to change the password with the new one
 
 	}
 
@@ -1583,7 +1583,7 @@ public class UserServiceTest extends BaseContextSensitiveTest {
 		Long tokenTime = System.currentTimeMillis() + validTime;
 		LoginCredential credentials = dao.getLoginCredential(createdUser);
 		credentials.setActivationKey("b071c88d6d877922e35af2e6a90dd57d37ac61143a03bb986c5f353566f3972a86ce9b2604c31a22dfa467922dcfd54fa7d18b0a7c7648d94ca3d97a88ea2fd0:"+tokenTime);			
-		dao.updateLoginCredential(credentials);
+		dao.updateLoginCredential(credentials); // &line[updateLoginCredential]
 		assertEquals(createdUser, userService.getUserByActivationKey(key)); 	
 	}
 	
@@ -1595,7 +1595,7 @@ public class UserServiceTest extends BaseContextSensitiveTest {
 		Long tokenTime = System.currentTimeMillis() - validTime;
 		LoginCredential credentials = dao.getLoginCredential(createdUser);
 		credentials.setActivationKey("b071c88d6d877922e35af2e6a90dd57d37ac61143a03bb986c5f353566f3972a86ce9b2604c31a22dfa467922dcfd54fa7d18b0a7c7648d94ca3d97a88ea2fd0:"+tokenTime);			
-		dao.updateLoginCredential(credentials); 
+		dao.updateLoginCredential(credentials);  // &line[updateLoginCredential]
 		assertNull(userService.getUserByActivationKey(key)); 
 	}
 	
@@ -1609,7 +1609,7 @@ public class UserServiceTest extends BaseContextSensitiveTest {
 		credentials.setActivationKey(
 		    "b071c88d6d877922e35af2e6a90dd57d37ac61143a03bb986c5f353566f3972a86ce9b2604c31a22dfa467922dcfd54fa7d18b0a7c7648d94ca3d97a88ea2fd0:"
 		            + tokenTime);
-		dao.updateLoginCredential(credentials);
+		dao.updateLoginCredential(credentials); // &line[updateLoginCredential]
 		
 		final String PASSWORD = "Admin123";
 		Context.authenticate(createdUser.getUsername(), "Openmr5xy");
@@ -1639,7 +1639,7 @@ public class UserServiceTest extends BaseContextSensitiveTest {
 		credentials.setActivationKey(
 		    "b071c88d6d877922e35af2e6a90dd57d37ac61143a03bb986c5f353566f3972a86ce9b2604c31a22dfa467922dcfd54fa7d18b0a7c7648d94ca3d97a88ea2fd0:"
 		            + tokenTime);
-		dao.updateLoginCredential(credentials);
+		dao.updateLoginCredential(credentials); // &line[updateLoginCredential]
 		Context.authenticate(createdUser.getUsername(), "Openmr5xy");
 		
 		

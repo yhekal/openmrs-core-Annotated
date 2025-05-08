@@ -39,6 +39,7 @@ public abstract class BaseAttributeTypeValidator<T extends AttributeType<?>> imp
 	 * <strong>Should</strong> fail validation if field lengths are not correct
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object target, Errors errors) {
 		@SuppressWarnings("unchecked")
 		T attributeType = (T) target;
@@ -98,5 +99,6 @@ public abstract class BaseAttributeTypeValidator<T extends AttributeType<?>> imp
 			ValidateUtil.validateFieldLengths(errors, target.getClass(), "datatypeConfig", "handlerConfig");
 		}
 	}
+	// &end[validate]
 	
 }

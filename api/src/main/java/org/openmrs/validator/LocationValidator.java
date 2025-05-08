@@ -52,6 +52,7 @@ public class LocationValidator extends BaseCustomizableValidator implements Vali
 	 * <strong>Should</strong> fail validation if field lengths are not correct
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) {
 		Location location = (Location) obj;
 		if (location == null) {
@@ -88,5 +89,6 @@ public class LocationValidator extends BaseCustomizableValidator implements Vali
 		}
 		
 	}
+	// &end[validate]
 	
 }

@@ -24,12 +24,6 @@ public class StartupErrorFilterModel {
 	
 	public String stacktrace;
 	
-	// automatically given to the .vm files and used there
-	public static final String HEADER_TEMPLATE = "org/openmrs/web/filter/startuperror/header.vm";
-	
-	// automatically given to the .vm files and used there
-	public static final String FOOTER_TEMPLATE = "org/openmrs/web/filter/footer.vm";
-	
 	/**
 	 * Default constructor that sets up some of the properties
 	 */

@@ -91,6 +91,7 @@ public class ConceptValidator extends BaseCustomizableValidator implements Valid
 	 * or ConceptMap, as a retired Concept bypasses ConceptName and ConceptMap validation.
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) throws APIException, DuplicateConceptNameException {
 		
 		if (obj == null || !(obj instanceof Concept)) {
@@ -257,4 +258,5 @@ public class ConceptValidator extends BaseCustomizableValidator implements Valid
 		ValidateUtil.validateFieldLengths(errors, obj.getClass(), "version", "retireReason");
 		super.validateAttributes(conceptToValidate, errors, Context.getConceptService().getAllConceptAttributeTypes());
 	}
+	// &end[validate]
 }

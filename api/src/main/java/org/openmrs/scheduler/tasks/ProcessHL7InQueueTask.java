@@ -45,7 +45,7 @@ public class ProcessHL7InQueueTask extends AbstractTask {
 	 */
 	@Override
 	public void execute() {
-		Context.openSession();
+		Context.openSession(); // &line[openSession]
 		try {
 			log.debug("Processing HL7 queue ... ");
 			processor.processHL7InQueue();
@@ -55,7 +55,7 @@ public class ProcessHL7InQueueTask extends AbstractTask {
 			throw new APIException("Hl7inQueue.error.running", null, e);
 		}
 		finally {
-			Context.closeSession();
+			Context.closeSession(); // &line[closeSession]
 		}
 	}
 	

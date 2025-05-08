@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.openmrs.api.StorageService;
 import org.openmrs.api.stream.StreamDataService;
@@ -59,9 +58,9 @@ public class LocalStorageService extends BaseStorageService implements StorageSe
 	
 	private final MimetypesFileTypeMap mimetypes = new MimetypesFileTypeMap();
 	
-	public LocalStorageService(@Value("${storage_dir:}") String storageDir, @Autowired StreamDataService streamService) {
+	public LocalStorageService(@Value("${storage_dir}") String storageDir, @Autowired StreamDataService streamService) {
 		super(streamService);
-		this.storageDir = StringUtils.isBlank(storageDir) ? Paths.get(OpenmrsUtil.getApplicationDataDirectory(), 
+		this.storageDir = "${storage_dir}".equals(storageDir) ? Paths.get(OpenmrsUtil.getApplicationDataDirectory(), 
 			"storage").toAbsolutePath() : Paths.get(storageDir).toAbsolutePath();
 	}
 	
@@ -96,6 +95,7 @@ public class LocalStorageService extends BaseStorageService implements StorageSe
 	}
 
 	Path getPath(String key) {
+		key = key.replace('/', File.separatorChar); //MS Windows support
 		Path legacyStorageDir = getLegacyStorageDir();
 		Path legacyPath = legacyStorageDir.resolve(key);
 		if (Files.exists(legacyPath)) {
@@ -152,22 +152,26 @@ public class LocalStorageService extends BaseStorageService implements StorageSe
 				});
 	}
 
+	// &begin[decodeKey]
 	static String decodeKey(String key) {
 		try {
-			return URLDecoder.decode(key, "UTF-8");
+			return URLDecoder.decode(key, "UTF-8"); // &line[URLDecoder_decode]
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException(e);
 		}
 	}
+	// &end[decodeKey]
 
+	// &begin[encodeKey]
 	static String encodeKey(String key) {
 		try {
-			return URLEncoder.encode(key, "UTF-8").replace(".", "%2E")
+			return URLEncoder.encode(key, "UTF-8").replace(".", "%2E") // &line[URLEncoder_encode]
 				.replace("*", "%2A").replace("%2F", "/");
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException(e);
 		}
 	}
+	// &end[encodeKey]
 
 	Path newPath(String key) throws IOException {
 		key = encodeKey(key);

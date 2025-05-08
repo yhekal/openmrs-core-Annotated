@@ -36,6 +36,7 @@ public class ConditionValidator implements Validator {
 	 * <strong>Should</strong> fail validation if condition object is not an instance of the Condition class
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object object, Errors errors) {
 		if(object == null){
 			throw new IllegalArgumentException("The object parameter should not be null");
@@ -51,4 +52,5 @@ public class ConditionValidator implements Validator {
 			errors.rejectValue("clinicalStatus", "Condition.clinicalStatusShouldNotBeNull", "The clinical status is required");
 		}
 	}
+	// &end[validate]
 }

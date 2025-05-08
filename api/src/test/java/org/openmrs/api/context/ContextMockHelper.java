@@ -116,7 +116,7 @@ public class ContextMockHelper {
 		user.setUuid("1010d442-e134-11de-babe-001e378eb67e");
 		user.setUserId(1);
 		user.setUsername("admin");
-		user.addRole(new Role(RoleConstants.SUPERUSER));
+		user.addRole(new Role(RoleConstants.SUPERUSER));  // &line[addRole]
 		
 		Person person = new Person();
 		person.setUuid("6adb7c42-cfd2-4301-b53b-ff17c5654ff7");

@@ -34,6 +34,7 @@ public class CohortValidator implements Validator {
 	}
 
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) {
 		if (obj == null || !(obj instanceof Cohort)) {
 			throw new IllegalArgumentException("The parameter obj should not be null and must be of type"
@@ -62,4 +63,5 @@ public class CohortValidator implements Validator {
 			}
 		}
 	}
+	// &begin[validate]
 }

@@ -46,6 +46,7 @@ public class PersonMergeLogValidator implements Validator {
 	 * <strong>Should</strong> fail validation if field lengths are not correct
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) {
 		
 		PersonMergeLog personMergeLog = (PersonMergeLog) obj;
@@ -59,5 +60,6 @@ public class PersonMergeLogValidator implements Validator {
 			ValidateUtil.validateFieldLengths(errors, obj.getClass(), "voidReason");
 		}
 	}
+	// &end[validate]
 	
 }

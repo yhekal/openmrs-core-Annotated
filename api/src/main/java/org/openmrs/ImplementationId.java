@@ -49,6 +49,7 @@ public class ImplementationId implements java.io.Serializable {
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
+		// &begin[hashCode]
 	public int hashCode() {
 		if (getImplementationId() != null) {
 			return getImplementationId().hashCode() * 342 + 3;
@@ -56,6 +57,7 @@ public class ImplementationId implements java.io.Serializable {
 		
 		return super.hashCode();
 	}
+	// &end[hashCode]
 	
 	/**
 	 * Text describing this implementation. (e.g. Source for the AMPATH program in Kenya. Created by

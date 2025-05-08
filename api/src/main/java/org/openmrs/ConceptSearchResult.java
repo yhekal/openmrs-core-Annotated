@@ -146,10 +146,12 @@ public class ConceptSearchResult {
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
+		// &begin[hashCode]
 	public int hashCode() {
 		if (getConcept() == null) {
 			return super.hashCode();
 		}
 		return getConcept().hashCode();
 	}
+	// &end[hashCode]
 }

@@ -35,7 +35,7 @@ public class HibernateOpenmrsObjectDAO<T extends BaseOpenmrsObject> implements O
 	
 	@Override
 	public T getById(Serializable id) {
-		return (T) sessionFactory.getCurrentSession().get(mappedClass, id);
+		return (T) sessionFactory.getCurrentSession().get(mappedClass, id); // &line[getCurrentSession]
 	}
 	
 	/**
@@ -52,7 +52,7 @@ public class HibernateOpenmrsObjectDAO<T extends BaseOpenmrsObject> implements O
 	 */
 	@Override
 	public void delete(T persistent) {
-		sessionFactory.getCurrentSession().delete(persistent);
+		sessionFactory.getCurrentSession().delete(persistent); // &line[getCurrentSession]
 	}
 	
 	/**

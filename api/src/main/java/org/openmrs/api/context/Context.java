@@ -189,9 +189,10 @@ public class Context {
 	/**
 	 * Spring init method that sets the authentication scheme.
 	 */
+	// &begin[setAuthenticationScheme]
 	private static void setAuthenticationScheme() {
 
-		authenticationScheme = new UsernamePasswordAuthenticationScheme();
+		authenticationScheme = new UsernamePasswordAuthenticationScheme(); // &line[UsernamePasswordAuthenticationScheme]
 
 		try {
 			authenticationScheme = Context.getServiceContext().getApplicationContext().getBean(AuthenticationScheme.class); // manual autowiring (from a module)
@@ -207,6 +208,7 @@ public class Context {
 			log.error("Fatal error encountered when injecting the authentication scheme override. Sticking to OpenMRS default authentication scheme.");
 		}
 	}
+	// &end[setAuthenticationScheme]
 
 	/**
 	 * Loads a class with an instance of the OpenmrsClassLoader. Convenience method equivalent to
@@ -305,9 +307,11 @@ public class Context {
 	 * 
 	 * @return The enforced authentication scheme.
 	 */
-	public static AuthenticationScheme getAuthenticationScheme() {
-		return authenticationScheme;
+	// &begin[getAuthenticationScheme]
+	public static AuthenticationScheme getAuthenticationScheme() { 
+		return authenticationScheme; // &line[authenticationScheme]
 	}
+	// &end[getAuthenticationScheme]
 
 	/**
 	 * @deprecated as of 2.3.0, replaced by {@link #authenticate(Credentials)}
@@ -324,9 +328,11 @@ public class Context {
 	 * <strong>Should</strong> not authenticate with null password and proper system id
 	 */
 	@Deprecated
+		// &begin[authenticate]
 	public static void authenticate(String username, String password) throws ContextAuthenticationException {
-		authenticate(new UsernamePasswordCredentials(username, password));
+		authenticate(new UsernamePasswordCredentials(username, password)); // &line[authenticate]
 	}
+	// &end[authenticate]
 
 	/**
 	 * @param credentials
@@ -334,6 +340,7 @@ public class Context {
 	 * 
 	 * @since 2.3.0
 	 */
+	// &begin[authenticate]
 	public static Authenticated authenticate(Credentials credentials) throws ContextAuthenticationException {
 
 		if (Daemon.isDaemonThread()) {
@@ -346,8 +353,9 @@ public class Context {
 			throw new ContextAuthenticationException("Context cannot authenticate with null credentials.");
 		}
 
-		return getUserContext().authenticate(credentials);
+		return getUserContext().authenticate(credentials); // &line[authenticate]
 	}
+	// &end[authenticate]
 
 	/**
 	 * Refresh the authenticated user object in the current UserContext. This should be used when
@@ -357,14 +365,16 @@ public class Context {
 	 * @since 1.5
 	 * <strong>Should</strong> get fresh values from the database
 	 */
+	// &begin[refreshAuthenticatedUser]
 	public static void refreshAuthenticatedUser() {
 		if (Daemon.isDaemonThread()) {
 			return;
 		}
 		log.debug("Refreshing authenticated user");
 
-		getUserContext().refreshAuthenticatedUser();
+		getUserContext().refreshAuthenticatedUser(); // &line[refreshAuthenticatedUser]
 	}
+	// &end[refreshAuthenticatedUser]
 
 	/**
 	 * Become a different user. (You should only be able to do this as a superuser.)
@@ -549,9 +559,11 @@ public class Context {
 	/**
 	 * @return alert service
 	 */
+// &begin[getAlertService]
 	public static AlertService getAlertService() {
-		return getServiceContext().getAlertService();
+		return getServiceContext().getAlertService(); // &line[getAlertService]
 	}
+	// &end[getAlertService]
 
 	/**
 	 * @return program- and workflow-related services
@@ -637,7 +649,7 @@ public class Context {
 					Authenticator auth = new Authenticator() {
 
 						@Override
-						public PasswordAuthentication getPasswordAuthentication() {
+						public PasswordAuthentication getPasswordAuthentication() {  // &line[getPasswordAuthentication]
 							return new PasswordAuthentication(
 								ConfigUtil.getProperty("mail.user"),
 								ConfigUtil.getProperty("mail.password")
@@ -674,29 +686,33 @@ public class Context {
 	/**
 	 * @return "active" user who has been authenticated, otherwise <code>null</code>
 	 */
+	// &begin[getAuthenticatedUser]
 	public static User getAuthenticatedUser() {
 		if (Daemon.isDaemonThread()) {
 			return Daemon.getDaemonThreadUser();
 		}
 
-		return getUserContext().getAuthenticatedUser();
+		return getUserContext().getAuthenticatedUser(); // &line[getAuthenticatedUser]
 	}
+	// &begin[getAuthenticatedUser]
 
 	/**
 	 * @return true if user has been authenticated in this context
 	 */
+	// &begin[isAuthenticated]
 	public static boolean isAuthenticated() {
 		if (Daemon.isDaemonThread()) {
 			return true;
 		} else {
 			try {
-				return getAuthenticatedUser() != null;
+				return getAuthenticatedUser() != null; // &line[getAuthenticatedUser]
 			} catch (APIException e) {
 				log.info("Could not get authenticated user inside called to isAuthenticated(), assuming no user context has been defined", e);
 				return false;
 			}
 		}
 	}
+	// &begin[isAuthenticated]
 
 	/**
 	 * logs out the "active" (authenticated) user within context
@@ -704,25 +720,29 @@ public class Context {
 	 * @see #authenticate
 	 * <strong>Should</strong> not fail if session hasn't been opened yet
 	 */
+	// &begin[logout]
 	public static void logout() {
 		if (!isSessionOpen()) {
 			return; // fail early if there isn't even a session open
 		}
-		log.debug("Logging out : {}", getAuthenticatedUser());
+		log.debug("Logging out : {}", getAuthenticatedUser()); // &begin[getAuthenticatedUser]
 
-		getUserContext().logout();
+		getUserContext().logout(); // &begin[logout]
 
 		// reset the UserContext object (usually cleared out by closeSession()
 		// soon after this)
-		setUserContext(new UserContext(getAuthenticationScheme()));
+		setUserContext(new UserContext(getAuthenticationScheme())); // &begin[getAuthenticationScheme]
 	}
+	// &end[logout]
 
 	/**
 	 * Convenience method. Passes through to userContext.getAllRoles(User)
 	 */
+// &begin[getAllRoles]
 	public static Set<Role> getAllRoles(User user) throws Exception {
 		return getUserContext().getAllRoles();
 	}
+	// &end[getAllRoles]
 
 	/**
 	 * Convenience method. Passes through to userContext.hasPrivilege(String)
@@ -799,23 +819,27 @@ public class Context {
 	 * Used to define a unit of work. All "units of work" should be surrounded by openSession and
 	 * closeSession calls.
 	 */
+	// &begin[openSession]
 	public static void openSession() {
 		log.trace("opening session");
-		setUserContext(new UserContext(getAuthenticationScheme())); // must be cleared out in
+		setUserContext(new UserContext(getAuthenticationScheme())); // must be cleared out in // &line[getAuthenticationScheme]
 		// closeSession()
 		getContextDAO().openSession();
 	}
+	// &end[openSession]
 
 	/**
 	 * Used to define a unit of work. All "units of work" should be surrounded by openSession and
 	 * closeSession calls.
 	 */
+	// &begin[closeSession]
 	public static void closeSession() {
 		log.trace("closing session");
 		clearUserContext(); // because we set a UserContext on the current
 		// thread in openSession()
 		getContextDAO().closeSession();
 	}
+	// &end[closeSession]
 
 	/**
 	 * Used to define a unit of work which does not require clearing out the currently authenticated
@@ -824,9 +848,11 @@ public class Context {
 	 *
 	 * @since 1.10
 	 */
+	// &begin[openSessionWithCurrentUser]
 	public static void openSessionWithCurrentUser() {
-		getContextDAO().openSession();
+		getContextDAO().openSession(); // &line[openSession]
 	}
+	// &end[openSessionWithCurrentUser]
 
 	/**
 	 * Used when the a unit of work which started with a call for openSessionWithCurrentUser has
@@ -834,29 +860,35 @@ public class Context {
 	 *
 	 * @since 1.10
 	 */
+	// &begin[closeSessionWithCurrentUser]
 	public static void closeSessionWithCurrentUser() {
 		getContextDAO().closeSession();
 	}
+	// &end[closeSessionWithCurrentUser]
 
 	/**
 	 * Clears cached changes made so far during this unit of work without writing them to the
 	 * database. If you call this method, and later call closeSession() or flushSession() your
 	 * changes are still lost.
 	 */
+	// &begin[clearSession]
 	public static void clearSession() {
 		log.trace("clearing session");
 		getContextDAO().clearSession();
 	}
+	// &end[clearSession]
 
 	/**
 	 * Forces any changes made so far in this unit of work to be written to the database
 	 *
 	 * @since 1.6
 	 */
+	// &begin[flushSession]
 	public static void flushSession() {
 		log.trace("flushing session");
 		getContextDAO().flushSession();
 	}
+	// &end[flushSession]
 
 	/**
 	 * This method tells whether {@link #openSession()} has been called or not already. If it hasn't
@@ -866,9 +898,11 @@ public class Context {
 	 * @since 1.5
 	 * <strong>Should</strong> return true if session is closed
 	 */
+	// &begin[isSessionOpen]
 	public static boolean isSessionOpen() {
 		return userContextHolder.get() != null;
 	}
+	// &end[isSessionOpen]
 
 	/**
 	 * Used to re-read the state of the given instance from the underlying database.
@@ -887,10 +921,12 @@ public class Context {
 	 *
 	 * @param obj The object to evict/remove from the session
 	 */
+	// &begin[evictFromSession]
 	public static void evictFromSession(Object obj) {
 		log.trace("clearing session");
 		getContextDAO().evictFromSession(obj);
 	}
+	// &end[evictFromSession]
 
 	/**
 	 * Evicts the entity data for a particular entity instance.
@@ -944,8 +980,8 @@ public class Context {
 		// data directory can be set from the runtime properties
 		OpenmrsUtil.startup(props);
 
-		openSession();
-		clearSession();
+		openSession(); // &line[openSession]
+		clearSession();// &line[clearSession]
 
 		// add any privileges/roles that /must/ exist for openmrs to work
 		// correctly.
@@ -987,14 +1023,14 @@ public class Context {
 		properties.put("connection.password", password);
 		setRuntimeProperties(properties);
 
-		openSession(); // so that the startup method can use proxyPrivileges
+		openSession(); // &line[openSession]
 
 		startup(properties);
 
 		// start the scheduled tasks
 		SchedulerUtil.startup(properties);
 
-		closeSession();
+		closeSession(); // &line[closeSession]
 	}
 
 	/**
@@ -1101,8 +1137,8 @@ public class Context {
 		try {
 			Context.addProxyPrivilege(PrivilegeConstants.MANAGE_ROLES);
 			Set<String> currentRoleNames = new HashSet<>();
-			for (Role role : Context.getUserService().getAllRoles()) {
-				currentRoleNames.add(role.getRole().toUpperCase());
+			for (Role role : Context.getUserService().getAllRoles()) {  // &line[getAllRoles]
+				currentRoleNames.add(role.getRole().toUpperCase()); // &line[getRole]
 			}
 			Map<String, String> map = OpenmrsUtil.getCoreRoles();
 			for (Map.Entry<String, String> entry : map.entrySet()) {
@@ -1111,7 +1147,7 @@ public class Context {
 					Role role = new Role();
 					role.setRole(roleName);
 					role.setDescription(entry.getValue());
-					Context.getUserService().saveRole(role);
+					Context.getUserService().saveRole(role); // &line[saveRole]
 				}
 			}
 		}
@@ -1415,28 +1451,14 @@ public class Context {
 	}
 
 	/**
-	 * It should be used <b>IN TESTS ONLY</b>. See {@link #updateSearchIndex(Class[])} for normal use.
-	 * <p>
 	 * Updates the search index for objects of the given type.
 	 *
 	 * @see #updateSearchIndex()
-	 * @see #updateSearchIndex(Class[]) 
 	 * @param type
 	 * @since 1.11
 	 */
 	public static void updateSearchIndexForType(Class<?> type) {
 		getContextDAO().updateSearchIndexForType(type);
-	}
-
-	/**
-	 * Updates the search index for objects of the given types using mass indexer.
-	 * 
-	 * @see #updateSearchIndex() 
-	 * @param types
-	 * @since 2.8.0
-	 */
-	public static void updateSearchIndex(Class<?>... types) {
-		getContextDAO().updateSearchIndex(types);
 	}
 
 	/**

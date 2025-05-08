@@ -118,6 +118,7 @@ public class LogicTransform {
 	}
 	
 	@Override
+		// &begin[hashCode]
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -126,4 +127,5 @@ public class LogicTransform {
 		result = prime * result + ((sortColumn == null) ? 0 : sortColumn.hashCode());
 		return result;
 	}
+	// &end[hashCode]
 }

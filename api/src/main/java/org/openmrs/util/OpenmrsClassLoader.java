@@ -356,7 +356,7 @@ public class OpenmrsClassLoader extends URLClassLoader {
 			rootGroup = parent;
 		}
 		
-		log.info("this classloader hashcode: {}", OpenmrsClassLoaderHolder.INSTANCE.hashCode());
+		log.info("this classloader hashcode: {}", OpenmrsClassLoaderHolder.INSTANCE.hashCode()); // &line[hashCode]
 		
 		//Shut down and remove all cache managers.
 		List<CacheManager> knownCacheManagers = CacheManager.ALL_CACHE_MANAGERS;
@@ -433,7 +433,7 @@ public class OpenmrsClassLoader extends URLClassLoader {
 			        + t.getClass()
 			        + ":"
 			        + (t.getContextClassLoader() == null ? "null cl" : t.getContextClassLoader().getClass().getName() + " "
-			                + t.getContextClassLoader().hashCode()) + "]");
+			                + t.getContextClassLoader().hashCode()) + "]"); // &line[hashCode]
 			threadToReturn.add(t);
 		}
 		

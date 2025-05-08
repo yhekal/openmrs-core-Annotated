@@ -193,7 +193,9 @@ public class CohortMembership extends BaseChangeableOpenmrsData implements Compa
 	 * Creates a hash code of this object
     */
 	@Override
-	public int hashCode() {
-		return Objects.hash(patientId, endDate, startDate);
+		// &begin[hashCode]
+	public int hashCode() { 
+		return Objects.hash(patientId, endDate, startDate);  // &line[hash]
 	}
+	// &end[hashCode]
 }

@@ -78,6 +78,7 @@ public class DrugOrderValidator extends OrderValidator implements Validator {
 	 * <strong>Should</strong> fail validation if field lengths are not correct
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) {
 		super.validate(obj, errors);
 		
@@ -110,7 +111,9 @@ public class DrugOrderValidator extends OrderValidator implements Validator {
 			ValidateUtil.validateFieldLengths(errors, obj.getClass(), "asNeededCondition", "brandName");
 		}
 	}
+	// &end[validate]
 
+	// &begin[validateForRequireDrug]
 	private void validateForRequireDrug(Errors errors, DrugOrder order) {
 		//Reject if global property is set to specify a formulation for drug order
 		boolean requireDrug = Context.getAdministrationService().getGlobalPropertyValue(
@@ -136,7 +139,8 @@ public class DrugOrderValidator extends OrderValidator implements Validator {
 			}
 		}
 	}
-	
+	// &end[validateForRequireDrug]
+	// &begin[validateFieldsForOutpatientCareSettingType]
 	private void validateFieldsForOutpatientCareSettingType(DrugOrder order, Errors errors) {
 		if (order.getAction() != Order.Action.DISCONTINUE && order.getCareSetting() != null
 		        && order.getCareSetting().getCareSettingType().equals(CareSetting.CareSettingType.OUTPATIENT)) {
@@ -148,7 +152,8 @@ public class DrugOrderValidator extends OrderValidator implements Validator {
 			}
 		}
 	}
-	
+	// &end[validateFieldsForOutpatientCareSettingType]
+	// &begin[validatePairedFields]
 	private void validatePairedFields(DrugOrder order, Errors errors) {
 		if (order.getDose() != null) {
 			ValidationUtils.rejectIfEmpty(errors, "doseUnits", "DrugOrder.error.doseUnitsRequiredWithDose");
@@ -160,7 +165,8 @@ public class DrugOrderValidator extends OrderValidator implements Validator {
 			ValidationUtils.rejectIfEmpty(errors, "durationUnits", "DrugOrder.error.durationUnitsRequiredWithDuration");
 		}
 	}
-	
+	// &end[validatePairedFields]
+	// &begin[validateUnitsAreAmongAllowedConcepts]
 	private void validateUnitsAreAmongAllowedConcepts(Errors errors, DrugOrder order) {
 		OrderService orderService = Context.getOrderService();
 		if (order.getDoseUnits() != null) {
@@ -191,4 +197,5 @@ public class DrugOrderValidator extends OrderValidator implements Validator {
 			}
 		}
 	}
+	// &end[validateUnitsAreAmongAllowedConcepts]
 }

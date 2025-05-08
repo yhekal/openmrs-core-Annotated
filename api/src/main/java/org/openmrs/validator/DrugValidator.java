@@ -55,6 +55,7 @@ public class DrugValidator implements Validator {
 	 * <strong>Should</strong> fail validation if field lengths are not correct
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) {
 		if (obj == null || !(obj instanceof Drug)) {
 			throw new IllegalArgumentException("The parameter obj should not be null and must be of type" + Drug.class);
@@ -113,4 +114,5 @@ public class DrugValidator implements Validator {
 			ValidateUtil.validateFieldLengths(errors, obj.getClass(), "name", "retireReason", "strength");
 		}
 	}
+	// &end[validate]
 }

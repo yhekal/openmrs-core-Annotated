@@ -45,6 +45,7 @@ public class ConceptDatatypeValidator implements Validator {
 	 * <strong>Should</strong> fail validation if field lengths are not correct
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) {
 		ConceptDatatype cd = (ConceptDatatype) obj;
 		if (cd == null) {
@@ -55,5 +56,5 @@ public class ConceptDatatypeValidator implements Validator {
 			    "retireReason");
 		}
 	}
-	
+	// &end[validate]
 }

@@ -254,6 +254,7 @@ public class HibernateAdministrationDAO implements AdministrationDAO, Applicatio
 	
 	//@SuppressWarnings({ "deprecation", "unchecked", "rawtypes" })
 	@Override
+		// &begin[validate]
 	public void validate(Object object, Errors errors) throws DAOException {
 		Class entityClass = object.getClass();
 		ClassMetadata metadata = null;
@@ -309,6 +310,7 @@ public class HibernateAdministrationDAO implements AdministrationDAO, Applicatio
 		}
 		
 	}
+	validate
 	
 	/**
 	 * Fetches all validators that are registered
@@ -316,11 +318,10 @@ public class HibernateAdministrationDAO implements AdministrationDAO, Applicatio
 	 * @param obj the object that will be validated
 	 * @return list of compatible validators
 	 */
+	// &begin[getValidators]
 	protected List<Validator> getValidators(Object obj) {
 		List<Validator> matchingValidators = new ArrayList<>();
-
 		List<Validator> validators = HandlerUtil.getHandlersForType(Validator.class, obj.getClass());
-		
 		for (Validator validator : validators) {
 			if (validator.supports(obj.getClass())) {
 				matchingValidators.add(validator);
@@ -329,6 +330,7 @@ public class HibernateAdministrationDAO implements AdministrationDAO, Applicatio
 		
 		return matchingValidators;
 	}
+	// &end[getValidators]
 	
 	@Override
 	public boolean isDatabaseStringComparisonCaseSensitive() {

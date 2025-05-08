@@ -119,6 +119,7 @@ class StorageServiceTest extends BaseContextSensitiveTest {
 	}
 	
 	void saveTestData(String moduleId, String keySuffix, InputStream testData, Consumer<String> verify) throws IOException {
+
 		String key = null;
 		try {
 			if (testData == null) {

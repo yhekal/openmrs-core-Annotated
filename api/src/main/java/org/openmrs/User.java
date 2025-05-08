@@ -166,9 +166,11 @@ public class User extends BaseOpenmrsObject implements java.io.Serializable, Att
 	 * 
 	 * @return true/false if this user is defined as a super user
 	 */
+	// &begin[isSuperUser]
 	public boolean isSuperUser() {
-		return containsRole(RoleConstants.SUPERUSER);
+		return containsRole(RoleConstants.SUPERUSER); // &line[containsRole]
 	}
+	// &end[isSuperUser]
 	
 	/**
 	 * This method shouldn't be used directly. Use org.openmrs.api.context.Context#hasPrivilege so that
@@ -178,6 +180,7 @@ public class User extends BaseOpenmrsObject implements java.io.Serializable, Att
 	 * @param privilege
 	 * @return true/false depending on whether user has specified privilege
 	 */
+	// &begin[hasPrivilege]
 	public boolean hasPrivilege(String privilege) {
 		
 		// All authenticated users have the "" (empty) privilege
@@ -185,21 +188,22 @@ public class User extends BaseOpenmrsObject implements java.io.Serializable, Att
 			return true;
 		}
 		
-		if (isSuperUser()) {
+		if (isSuperUser()) { // &line[isSuperUser]
 			return true;
 		}
 		
-		Set<Role> tmproles = getAllRoles();
+		Set<Role> tmproles = getAllRoles(); // &line[getAllRoles]
 		
 		// loop over the roles and check each for the privilege
 		for (Role tmprole : tmproles) {
-			if (tmprole.hasPrivilege(privilege)) {
+			if (tmprole.hasPrivilege(privilege)) { // &line[hasPrivilege]
 				return true;
 			}
 		}
 		
 		return false;
 	}
+	// &end[hasPrivilege]
 	
 	/**
 	 * Check if this user has the given String role
@@ -207,9 +211,11 @@ public class User extends BaseOpenmrsObject implements java.io.Serializable, Att
 	 * @param r String name of a role to check
 	 * @return Returns true if this user has the specified role, false otherwise
 	 */
+	// &begin[hasRole]
 	public boolean hasRole(String r) {
 		return hasRole(r, false);
 	}
+	// &end[hasRole]
 	
 	/**
 	 * Checks if this user has the given String role
@@ -220,8 +226,9 @@ public class User extends BaseOpenmrsObject implements java.io.Serializable, Att
 	 * @return Returns true if the user has the given role, or if ignoreSuperUser is false and the user
 	 *         is a superUser
 	 */
+	// &begin[hasRole]
 	public boolean hasRole(String r, boolean ignoreSuperUser) {
-		if (!ignoreSuperUser && isSuperUser()) {
+		if (!ignoreSuperUser && isSuperUser()) { // &line[isSuperUser]
 			return true;
 		}
 		
@@ -229,12 +236,13 @@ public class User extends BaseOpenmrsObject implements java.io.Serializable, Att
 			return false;
 		}
 		
-		Set<Role> tmproles = getAllRoles();
+		Set<Role> tmproles = getAllRoles(); // &line[getAllRoles]
 		
 		log.debug("User # {} has roles: {}", userId, tmproles);
 		
 		return containsRole(r);
 	}
+	// &end[hasRole]
 	
 	/**
 	 * Checks if the user has a given role. Role name comparisons are not case sensitive.
@@ -245,14 +253,16 @@ public class User extends BaseOpenmrsObject implements java.io.Serializable, Att
 	 * <strong>Should</strong> return false if the user does not have the given role
 	 * <strong>Should</strong> be case insensitive
 	 */
+	// &begin[containsRole]
 	public boolean containsRole(String roleName) {
-		for (Role role : getAllRoles()) {
-			if (role.getRole().equalsIgnoreCase(roleName)) {
+		for (Role role : getAllRoles()) { // &line[getAllRoles]
+			if (role.getRole().equalsIgnoreCase(roleName)) { // &line[getRole]
 				return true;
 			}
 		}
 		return false;
 	}
+	// &end[containsRole]
 	
 	/**
 	 * Get <i>all</i> privileges this user has. This delves into all of the roles that a person has,
@@ -260,14 +270,15 @@ public class User extends BaseOpenmrsObject implements java.io.Serializable, Att
 	 * 
 	 * @return Collection of complete Privileges this user has
 	 */
+	// &begin[getPrivileges]
 	public Collection<Privilege> getPrivileges() {
 		Set<Privilege> privileges = new HashSet<>();
-		Set<Role> tmproles = getAllRoles();
+		Set<Role> tmproles = getAllRoles();  // &line[getAllRoles]
 		
 		Role role;
 		for (Role tmprole : tmproles) {
 			role = tmprole;
-			Collection<Privilege> privs = role.getPrivileges();
+			Collection<Privilege> privs = role.getPrivileges(); // &line[getPrivileges]
 			if (privs != null) {
 				privileges.addAll(privs);
 			}
@@ -275,6 +286,7 @@ public class User extends BaseOpenmrsObject implements java.io.Serializable, Att
 		
 		return privileges;
 	}
+	// &end[getPrivileges]
 	
 	// Property accessors
 	
@@ -284,6 +296,7 @@ public class User extends BaseOpenmrsObject implements java.io.Serializable, Att
 	 * 
 	 * @return all roles (inherited from parents and given) for this user
 	 */
+// &begin[getAllRoles]
 	public Set<Role> getAllRoles() {
 		// the user's immediate roles
 		Set<Role> baseRoles = new HashSet<>();
@@ -291,16 +304,16 @@ public class User extends BaseOpenmrsObject implements java.io.Serializable, Att
 		// the user's complete list of roles including
 		// the parent roles of their immediate roles
 		Set<Role> totalRoles = new HashSet<>();
-		if (getRoles() != null) {
-			baseRoles.addAll(getRoles());
-			totalRoles.addAll(getRoles());
+		if (getRoles() != null) { // &line[getRoles]
+			baseRoles.addAll(getRoles()); // &line[getRoles]
+			totalRoles.addAll(getRoles()); // &line[getRoles]
 		}
 		
 		log.debug("User's base roles: {}", baseRoles);
 		
 		try {
 			for (Role r : baseRoles) {
-				totalRoles.addAll(r.getAllParentRoles());
+				totalRoles.addAll(r.getAllParentRoles()); // &line[getAllParentRoles]
 			}
 		}
 		catch (ClassCastException e) {
@@ -313,20 +326,25 @@ public class User extends BaseOpenmrsObject implements java.io.Serializable, Att
 		}
 		return totalRoles;
 	}
+	// &end[getAllRoles]
 	
 	/**
 	 * @return Returns the roles.
 	 */
+// &begin[getRoles]
 	public Set<Role> getRoles() {
 		return roles;
 	}
+	// &end[getRoles]
 	
 	/**
 	 * @param roles The roles to set.
 	 */
+// &begin[setRoles]
 	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
 	}
+	// &end[setRoles]
 	
 	/**
 	 * Add the given Role to the list of roles for this User
@@ -334,6 +352,7 @@ public class User extends BaseOpenmrsObject implements java.io.Serializable, Att
 	 * @param role
 	 * @return Returns this user with the given role attached
 	 */
+// &begin[addRole]
 	public User addRole(Role role) {
 		if (roles == null) {
 			roles = new HashSet<>();
@@ -344,6 +363,7 @@ public class User extends BaseOpenmrsObject implements java.io.Serializable, Att
 		
 		return this;
 	}
+	// &end[addRole]
 	
 	/**
 	 * Remove the given Role from the list of roles for this User
@@ -351,6 +371,7 @@ public class User extends BaseOpenmrsObject implements java.io.Serializable, Att
 	 * @param role
 	 * @return this user with the given role removed
 	 */
+// &begin[removeRole]
 	public User removeRole(Role role) {
 		if (roles != null) {
 			roles.remove(role);
@@ -358,6 +379,7 @@ public class User extends BaseOpenmrsObject implements java.io.Serializable, Att
 		
 		return this;
 	}
+	// &end[removeRole]
 	
 	/**
 	 * @see org.openmrs.Attributable#findPossibleValues(java.lang.String)

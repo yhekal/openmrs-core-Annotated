@@ -16,12 +16,14 @@ import java.util.TreeSet;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.envers.Audited;
+import org.hibernate.search.annotations.Indexed;
 
 /**
  * The ConceptNumeric extends upon the Concept object by adding some number range values
  * 
  * @see Concept
  */
+@Indexed
 @Audited
 public class ConceptNumeric extends Concept {
 	

@@ -66,6 +66,7 @@ public class ProviderValidator extends BaseCustomizableValidator implements Vali
 	 * <strong>Should</strong> fail validation if field lengths are not correct
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) throws APIException {
 		log.debug("{}.validate...", this.getClass().getName());
 		
@@ -87,5 +88,6 @@ public class ProviderValidator extends BaseCustomizableValidator implements Vali
 		ValidateUtil.validateFieldLengths(errors, obj.getClass(), "name", "identifier", "retireReason");
 		super.validateAttributes(provider, errors, Context.getProviderService().getAllProviderAttributeTypes());
 	}
+	// &end[validate]
 	
 }

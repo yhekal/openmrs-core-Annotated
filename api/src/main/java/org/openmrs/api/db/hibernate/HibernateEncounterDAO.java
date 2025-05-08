@@ -78,7 +78,7 @@ public class HibernateEncounterDAO implements EncounterDAO {
 	 */
 	@Override
 	public Encounter saveEncounter(Encounter encounter) throws DAOException {
-		sessionFactory.getCurrentSession().saveOrUpdate(encounter);
+		sessionFactory.getCurrentSession().saveOrUpdate(encounter); // &line[getCurrentSession]
 		return encounter;
 	}
 	
@@ -87,7 +87,7 @@ public class HibernateEncounterDAO implements EncounterDAO {
 	 */
 	@Override
 	public void deleteEncounter(Encounter encounter) throws DAOException {
-		sessionFactory.getCurrentSession().delete(encounter);
+		sessionFactory.getCurrentSession().delete(encounter); // &line[getCurrentSession]
 	}
 	
 	/**
@@ -95,7 +95,7 @@ public class HibernateEncounterDAO implements EncounterDAO {
 	 */
 	@Override
 	public Encounter getEncounter(Integer encounterId) throws DAOException {
-		return sessionFactory.getCurrentSession().get(Encounter.class, encounterId);
+		return sessionFactory.getCurrentSession().get(Encounter.class, encounterId); // &line[getCurrentSession]
 	}
 
 	/**
@@ -103,7 +103,7 @@ public class HibernateEncounterDAO implements EncounterDAO {
 	 */
 	@Override
 	public List<Encounter> getEncountersByPatientId(Integer patientId) throws DAOException {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = sessionFactory.getCurrentSession();// &line[getCurrentSession]
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<Encounter> cq = cb.createQuery(Encounter.class);
 		Root<Encounter> encounterRoot = cq.from(Encounter.class);
@@ -123,7 +123,7 @@ public class HibernateEncounterDAO implements EncounterDAO {
 	 */
 	@Override
 	public List<Encounter> getEncounters(EncounterSearchCriteria searchCriteria) {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = sessionFactory.getCurrentSession(); // &line[getCurrentSession]
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<Encounter> cq = cb.createQuery(Encounter.class);
 		Root<Encounter> encounter = cq.from(Encounter.class);
@@ -183,7 +183,7 @@ public class HibernateEncounterDAO implements EncounterDAO {
 	 */
 	@Override
 	public EncounterType saveEncounterType(EncounterType encounterType) {
-		sessionFactory.getCurrentSession().saveOrUpdate(encounterType);
+		sessionFactory.getCurrentSession().saveOrUpdate(encounterType); // &line[getCurrentSession]
 		return encounterType;
 	}
 	
@@ -192,7 +192,7 @@ public class HibernateEncounterDAO implements EncounterDAO {
 	 */
 	@Override
 	public void deleteEncounterType(EncounterType encounterType) throws DAOException {
-		sessionFactory.getCurrentSession().delete(encounterType);
+		sessionFactory.getCurrentSession().delete(encounterType); // &line[getCurrentSession]
 	}
 	
 	/**
@@ -200,7 +200,7 @@ public class HibernateEncounterDAO implements EncounterDAO {
 	 */
 	@Override
 	public EncounterType getEncounterType(Integer encounterTypeId) throws DAOException {
-		return sessionFactory.getCurrentSession().get(EncounterType.class, encounterTypeId);
+		return sessionFactory.getCurrentSession().get(EncounterType.class, encounterTypeId); // &line[getCurrentSession]
 	}
 
 	/**
@@ -208,7 +208,7 @@ public class HibernateEncounterDAO implements EncounterDAO {
 	 */
 	@Override
 	public EncounterType getEncounterType(String name) throws DAOException {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = sessionFactory.getCurrentSession(); // &line[getCurrentSession]
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<EncounterType> cq = cb.createQuery(EncounterType.class);
 		Root<EncounterType> root = cq.from(EncounterType.class);
@@ -223,7 +223,7 @@ public class HibernateEncounterDAO implements EncounterDAO {
 	 */
 	@Override
 	public List<EncounterType> getAllEncounterTypes(Boolean includeRetired) throws DAOException {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = sessionFactory.getCurrentSession(); // &line[getCurrentSession]
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<EncounterType> cq = cb.createQuery(EncounterType.class);
 		Root<EncounterType> root = cq.from(EncounterType.class);
@@ -242,7 +242,7 @@ public class HibernateEncounterDAO implements EncounterDAO {
 	 */
 	@Override
 	public List<EncounterType> findEncounterTypes(String name) throws DAOException {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = sessionFactory.getCurrentSession(); // &line[getCurrentSession]
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<EncounterType> cq = cb.createQuery(EncounterType.class);
 		Root<EncounterType> root = cq.from(EncounterType.class);
@@ -263,7 +263,7 @@ public class HibernateEncounterDAO implements EncounterDAO {
 		//Usages of this method currently are internal and don't require a flush
 		//Otherwise we end up with premature flushes of Immutable types like Obs
 		//that are associated to the encounter before we void and replace them
-		Session session = sessionFactory.getCurrentSession();
+		Session session = sessionFactory.getCurrentSession(); // &line[getCurrentSession]
 		FlushMode flushMode = session.getHibernateFlushMode();
 		session.setHibernateFlushMode(FlushMode.MANUAL);
 		try {
@@ -304,7 +304,7 @@ public class HibernateEncounterDAO implements EncounterDAO {
 			return Collections.emptyList();
 		}
 
-		Session session = sessionFactory.getCurrentSession();
+		Session session = sessionFactory.getCurrentSession(); // &line[getCurrentSession]
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<Encounter> cq = cb.createQuery(Encounter.class);
 		Root<Encounter> root = cq.from(Encounter.class);

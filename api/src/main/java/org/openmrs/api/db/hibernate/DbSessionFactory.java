@@ -27,10 +27,12 @@ public class DbSessionFactory {
 	public DbSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
-	
+
+	// &begin[getCurrentSession]
 	public DbSession getCurrentSession() {
 		return new DbSession(sessionFactory);
 	}
+	// &end[getCurrentSession]
 	
 	public SessionFactory getHibernateSessionFactory() {
 		return sessionFactory;

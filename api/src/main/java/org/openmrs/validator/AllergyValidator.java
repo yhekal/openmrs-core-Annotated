@@ -54,6 +54,7 @@ public class AllergyValidator implements Validator {
 	 * <strong>Should</strong> reject numeric values and symbols on reactionNonCoded
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object target, Errors errors) {
 		
 		if (target == null) {
@@ -96,4 +97,5 @@ public class AllergyValidator implements Validator {
 			}
 		}
 	}
+	// &end[validate]
 }

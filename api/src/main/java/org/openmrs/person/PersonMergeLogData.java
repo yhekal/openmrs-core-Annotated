@@ -372,7 +372,7 @@ public class PersonMergeLogData {
 		str += (getPriorDateOfBirth() != null) ? getPriorDateOfBirth().toString() : getPriorDateOfBirth();
 		str += (getPriorDateOfBirth() != null) ? getPriorDateOfDeath().toString() : getPriorDateOfDeath();
 		str += isPriorDateOfBirthEstimated();
-		return str.hashCode();
+		return str.hashCode(); // &line[hashCode]
 	}
 	
 }

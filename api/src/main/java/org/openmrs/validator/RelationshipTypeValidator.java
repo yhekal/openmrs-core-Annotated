@@ -46,6 +46,7 @@ public class RelationshipTypeValidator implements Validator {
 	 * <strong>Should</strong> fail validation if field lengths are not correct
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) {
 		RelationshipType relationshipType = (RelationshipType) obj;
 		if (relationshipType == null) {
@@ -63,4 +64,5 @@ public class RelationshipTypeValidator implements Validator {
 			ValidateUtil.validateFieldLengths(errors, obj.getClass(), "aIsToB", "bIsToA", "description", "retireReason");
 		}
 	}
+	// &end[validate]
 }

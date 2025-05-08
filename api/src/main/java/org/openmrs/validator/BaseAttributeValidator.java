@@ -35,6 +35,7 @@ public class BaseAttributeValidator implements Validator {
 	 * @see org.springframework.validation.Validator#validate(java.lang.Object, org.springframework.validation.Errors)
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object target, Errors errors) {
 		Attribute<?, ?> attribute = (Attribute<?, ?>) target;
 		ValidationUtils.rejectIfEmpty(errors, "attributeType", "error.null");
@@ -47,5 +48,6 @@ public class BaseAttributeValidator implements Validator {
 		}
 		
 	}
+	// &end[validate]
 	
 }

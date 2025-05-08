@@ -86,9 +86,9 @@ public class WebModuleUtil {
 	
 	private static final Logger log = LoggerFactory.getLogger(WebModuleUtil.class);
 	
-	private static final Lock SERVLET_LOCK = new ReentrantLock();
+	private static final Lock SERVLET_LOCK = new ReentrantLock(); // &line[ReentrantLock]
 	
-	private static final Lock FILTERS_LOCK = new ReentrantLock();
+	private static final Lock FILTERS_LOCK = new ReentrantLock(); // &line[ReentrantLock]
 	
 	// caches all modules' mapped servlets
 	private static final Map<String, HttpServlet> MODULE_SERVLETS = new HashMap<>();

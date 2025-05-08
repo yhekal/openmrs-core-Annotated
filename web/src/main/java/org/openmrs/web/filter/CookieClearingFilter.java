@@ -78,10 +78,10 @@ public class CookieClearingFilter extends OncePerRequestFilter {
 		}
 		finally {
 			if (cookiesToClear.length > 0 && !response.isCommitted()) {
-				HttpSession session = request.getSession(false);
+				HttpSession session = request.getSession(false);  // &line[request_getSession]
 				// session was invalidated
 				if (session == null && requestHasSession) {
-					for (Cookie cookie : request.getCookies()) {
+					for (Cookie cookie : request.getCookies()) { // &line[request_getCookies]
 						for (String cookieToClear : cookiesToClear) {
 							if (cookieToClear.equalsIgnoreCase(cookie.getName())) {
 								Cookie clearedCookie = new Cookie(cookie.getName(), null);

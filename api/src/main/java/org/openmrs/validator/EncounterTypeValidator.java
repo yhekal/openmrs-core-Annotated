@@ -49,6 +49,7 @@ public class EncounterTypeValidator implements Validator {
 	 * <strong>Should</strong> fail validation if field lengths are not correct
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) {
 		EncounterType encounterType = (EncounterType) obj;
 		if (encounterType == null) {
@@ -67,4 +68,5 @@ public class EncounterTypeValidator implements Validator {
 			ValidateUtil.validateFieldLengths(errors, obj.getClass(), "name", "description", "retireReason");
 		}
 	}
+	// &end[validate]
 }

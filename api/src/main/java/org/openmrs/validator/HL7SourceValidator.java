@@ -45,6 +45,7 @@ public class HL7SourceValidator implements Validator {
 	 * <strong>Should</strong> fail validation if field lengths are not correct
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) {
 		HL7Source hl7Source = (HL7Source) obj;
 		if (hl7Source == null) {
@@ -54,5 +55,6 @@ public class HL7SourceValidator implements Validator {
 			ValidateUtil.validateFieldLengths(errors, obj.getClass(), "name");
 		}
 	}
+	// &end[validate]
 	
 }

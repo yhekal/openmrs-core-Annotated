@@ -56,10 +56,11 @@ public class DbSession {
 	public DbSession(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
-	
+	// &begin[getSession]
 	private Session getSession() {
-		return sessionFactory.getCurrentSession();
+		return sessionFactory.getCurrentSession(); // &line[getCurrentSession]
 	}
+	// &end[getSession]
 	
 	/**
 	 * Obtain the tenant identifier associated with this session.

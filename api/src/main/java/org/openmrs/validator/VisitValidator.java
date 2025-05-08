@@ -74,6 +74,7 @@ public class VisitValidator extends BaseCustomizableValidator implements Validat
 	 * <strong>Should</strong> fail validation if field lengths are not correct
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object target, Errors errors) {
 		Visit visit = (Visit) target;
 		ValidationUtils.rejectIfEmpty(errors, "patient", "Visit.error.patient.required");
@@ -140,6 +141,7 @@ public class VisitValidator extends BaseCustomizableValidator implements Validat
 		
 		validateVisitStartedBeforePatientBirthdate(visit, errors);
 	}
+	// &end[validate]
 	
 	/*
 	 * Convenience method to make the code more readable.

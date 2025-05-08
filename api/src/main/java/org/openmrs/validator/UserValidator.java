@@ -68,6 +68,7 @@ public class UserValidator implements Validator {
 	 * <strong>Should</strong> fail validation if field lengths are not correct
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) {
 		User user = (User) obj;
 		if (user == null) {
@@ -141,6 +142,7 @@ public class UserValidator implements Validator {
 			ValidateUtil.validateFieldLengths(errors, obj.getClass(), "username", "systemId", "retireReason");
 		}
 	}
+	// &end[validate]
 	
 	/**
 	 * Convenience method to check the given username against the regular expression. <br>

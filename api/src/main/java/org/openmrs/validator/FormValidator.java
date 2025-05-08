@@ -48,6 +48,7 @@ public class FormValidator implements Validator {
 	 * <strong>Should</strong> fail validation if field lengths are not correct
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) {
 		
 		obj = HibernateUtil.getRealObjectFromProxy(obj);
@@ -70,5 +71,6 @@ public class FormValidator implements Validator {
 			ValidateUtil.validateFieldLengths(errors, obj.getClass(), "name", "version", "description", "retireReason");
 		}
 	}
+	// &end[validate]
 	
 }

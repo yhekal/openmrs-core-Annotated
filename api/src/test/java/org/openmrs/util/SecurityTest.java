@@ -39,7 +39,7 @@ public class SecurityTest {
 	 */
 	@Test
 	public void encodeString_shouldEncodeStringsToXCharactersWithXCharactersSalt() {
-		String hash = Security.encodeString("test" + Security.getRandomToken());
+		String hash = Security.encodeString("test" + Security.getRandomToken()); 
 		assertEquals(HASH_LENGTH, hash.length());
 	}
 	
@@ -189,7 +189,7 @@ public class SecurityTest {
 	public void encrypt_shouldEncryptShortAndLongText() {
 		// small text
 		String expected = "a";
-		String encrypted = Security.encrypt(expected);
+		String encrypted = Security.encrypt(expected); 
 		assertTrue(StringUtils.hasText(encrypted));
 		String actual = Security.decrypt(encrypted);
 		assertTrue(OpenmrsUtil.nullSafeEquals(expected, actual));

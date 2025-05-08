@@ -49,9 +49,9 @@ public class CheckInternetConnectivityTask extends AbstractTask {
 				String text = "At " + new Date() + " there was an error reported connecting to the internet address " + url
 				        + ": " + ioe;
 				// TODO role should be provided as a property to taskconfig
-				Role role = Context.getUserService().getRole("System Developer");
+				Role role = Context.getUserService().getRole("System Developer"); // &line[getRole]
 				Collection<User> users = Context.getUserService().getUsersByRole(role);
-				Context.getAlertService().saveAlert(new Alert(text, users));
+				Context.getAlertService().saveAlert(new Alert(text, users)); // &line[getAlertService]
 			}
 			catch (Exception e) {
 				// Uh oh, just log it.

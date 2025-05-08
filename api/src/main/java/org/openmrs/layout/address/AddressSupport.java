@@ -57,7 +57,7 @@ public class AddressSupport extends LayoutSupport<AddressTemplate> implements Gl
 			
 			String layoutTemplateXml = Context.getAdministrationService().getGlobalProperty(
 			    OpenmrsConstants.GLOBAL_PROPERTY_ADDRESS_TEMPLATE);
-			setAddressTemplate(StringEscapeUtils.unescapeXml(layoutTemplateXml));
+			setAddressTemplate(StringEscapeUtils.unescapeXml(layoutTemplateXml)); // &line[unescapeXml]
 			
 			List<String> specialTokens = new ArrayList<>();
 			specialTokens.add("address1");
@@ -145,7 +145,7 @@ public class AddressSupport extends LayoutSupport<AddressTemplate> implements Gl
 		AddressTemplate addressTemplate;
 		try {
 			
-			addressTemplate = Context.getSerializationService().getDefaultSerializer().deserialize(StringEscapeUtils.unescapeXml(xml),
+			addressTemplate = Context.getSerializationService().getDefaultSerializer().deserialize(StringEscapeUtils.unescapeXml(xml),  // &line[unescapeXml]
 			    AddressTemplate.class);
 		}
 		catch (SerializationException e) {

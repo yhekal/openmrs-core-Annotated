@@ -63,6 +63,7 @@ public class EncounterValidator implements Validator {
 	 * <strong>Should</strong> fail validation if field lengths are not correct
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) throws APIException {
 		log.debug("{}.validate...", this.getClass().getName());
 		
@@ -103,4 +104,5 @@ public class EncounterValidator implements Validator {
 		}
 		ValidateUtil.validateFieldLengths(errors, obj.getClass(), "voidReason");
 	}
+	// &end[validate]
 }

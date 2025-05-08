@@ -257,6 +257,7 @@ public class MigrationHelper {
 				user.addName(pn);
 				user.setUsername(username);
 				// Generate a temporary password: 8-12 random characters
+				// &begin[temp_password]
 				String pass;
 				{
 					int length = rand.nextInt(4) + 8;
@@ -267,10 +268,11 @@ public class MigrationHelper {
 					}
 					pass = new String(password);
 				}
+				// &end[temp_password]
 				if (autoAddRole) {
-					Role role = us.getRole(relationshipType);
+					Role role = us.getRole(relationshipType);  // &line[getRole]
 					if (role != null) {
-						user.addRole(role);
+						user.addRole(role); // &line[addRole]
 					}
 				}
 				us.createUser(user, pass);

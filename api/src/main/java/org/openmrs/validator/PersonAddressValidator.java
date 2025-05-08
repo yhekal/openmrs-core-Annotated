@@ -58,6 +58,7 @@ public class PersonAddressValidator implements Validator {
 	 * <strong>Should</strong> fail validation if field lengths are not correct
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object object, Errors errors) {
 		//TODO Validate other aspects of the personAddress object
 		log.debug("{}.validate...", this.getClass().getName());
@@ -95,7 +96,7 @@ public class PersonAddressValidator implements Validator {
 		List<String> requiredElements;
 		
 		try {
-			AddressTemplate addressTemplate = Context.getSerializationService().getDefaultSerializer().deserialize(StringEscapeUtils.unescapeXml(xml),
+			AddressTemplate addressTemplate = Context.getSerializationService().getDefaultSerializer().deserialize(StringEscapeUtils.unescapeXml(xml), // &line[unescapeXml]
 			    AddressTemplate.class);
 			requiredElements = addressTemplate.getRequiredElements();
 		}
@@ -130,4 +131,5 @@ public class PersonAddressValidator implements Validator {
 		    "address5", "address6", "address7", "address8", "address9", "address10", "address11", "address12", "address13", 
 		    "address14", "address15");
 	}
+	// &end[validate]
 }

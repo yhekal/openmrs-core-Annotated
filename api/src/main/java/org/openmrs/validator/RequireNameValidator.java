@@ -43,8 +43,10 @@ public class RequireNameValidator implements Validator {
 	 * <strong>Should</strong> pass validation if name has proper value
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object o, Errors errors) {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "error.name");
 	}
+	// &end[validate]
 	
 }

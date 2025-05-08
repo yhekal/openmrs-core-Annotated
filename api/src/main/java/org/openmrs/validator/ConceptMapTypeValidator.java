@@ -50,6 +50,7 @@ public class ConceptMapTypeValidator implements Validator {
 	 * <strong>Should</strong> fail validation if field lengths are not correct
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) {
 		
 		if (obj == null || !(obj instanceof ConceptMapType)) {
@@ -72,4 +73,5 @@ public class ConceptMapTypeValidator implements Validator {
 		}
 		ValidateUtil.validateFieldLengths(errors, obj.getClass(), "name", "description", "retireReason");
 	}
+	// &end[validate]
 }

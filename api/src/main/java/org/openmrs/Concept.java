@@ -27,22 +27,18 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.envers.Audited;
-import org.hibernate.search.engine.backend.types.ObjectStructure;
-import org.hibernate.search.mapper.pojo.bridge.mapping.annotation.ValueBridgeRef;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.AssociationInverseSide;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.DocumentId;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordField;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.ObjectPath;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.PropertyValue;
+import org.hibernate.search.annotations.ContainedIn;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FullTextFilterDef;
+import org.hibernate.search.annotations.FullTextFilterDefs;
+import org.hibernate.search.annotations.IndexedEmbedded;
 import org.openmrs.annotation.AllowDirectAccess;
 import org.openmrs.api.APIException;
 import org.openmrs.api.ConceptNameType;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
-import org.openmrs.api.db.hibernate.search.bridge.OpenmrsObjectValueBridge;
+import org.openmrs.api.db.hibernate.search.TermsFilterFactory;
 import org.openmrs.customdatatype.CustomValueDescriptor;
 import org.openmrs.customdatatype.Customizable;
 import org.openmrs.util.LocaleUtility;
@@ -73,6 +69,7 @@ import org.springframework.util.ObjectUtils;
  * @see ConceptMap
  * @see ConceptService
  */
+@FullTextFilterDefs( { @FullTextFilterDef(name = "termsFilterFactory", impl = TermsFilterFactory.class) })
 @Audited
 public class Concept extends BaseOpenmrsObject implements Auditable, Retireable, Serializable, Attributable<Concept>,Customizable<ConceptAttribute> {
 	
@@ -85,7 +82,7 @@ public class Concept extends BaseOpenmrsObject implements Auditable, Retireable,
 	@DocumentId
 	private Integer conceptId;
 	
-	@GenericField
+	@Field
 	private Boolean retired = false;
 	
 	private User retiredBy;
@@ -94,14 +91,10 @@ public class Concept extends BaseOpenmrsObject implements Auditable, Retireable,
 	
 	private String retireReason;
 	
-	@KeywordField(
-		valueBridge = @ValueBridgeRef(type = OpenmrsObjectValueBridge.class)
-	)
+	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	private ConceptDatatype datatype;
-
-	@KeywordField(
-		valueBridge = @ValueBridgeRef(type = OpenmrsObjectValueBridge.class)
-	)
+	
+	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	private ConceptClass conceptClass;
 	
 	private Boolean set = false;
@@ -117,7 +110,7 @@ public class Concept extends BaseOpenmrsObject implements Auditable, Retireable,
 	private Date dateChanged;
 	
 	@AllowDirectAccess
-	@AssociationInverseSide(inversePath = @ObjectPath({@PropertyValue(propertyName = "concept")}))
+	@ContainedIn
 	private Collection<ConceptName> names;
 	
 	@AllowDirectAccess
@@ -127,10 +120,7 @@ public class Concept extends BaseOpenmrsObject implements Auditable, Retireable,
 	
 	private Collection<ConceptDescription> descriptions;
 	
-	@IndexedEmbedded
-	@AssociationInverseSide(inversePath = @ObjectPath({
-		@PropertyValue(propertyName = "concept")
-	}))
+	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	private Collection<ConceptMap> conceptMappings;
 	
 	/**

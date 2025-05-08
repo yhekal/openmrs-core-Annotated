@@ -53,6 +53,7 @@ public class PatientIdentifierValidator implements Validator {
 	 * <strong>Should</strong> fail validation if field lengths are not correct
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) {
 		PatientIdentifier pi = (PatientIdentifier) obj;
 		try {
@@ -63,7 +64,7 @@ public class PatientIdentifierValidator implements Validator {
 			errors.reject(e.getMessage());
 		}
 	}
-	
+	// &end[validate]
 	/**
 	 * Checks that the given {@link PatientIdentifier} is valid
 	 * 

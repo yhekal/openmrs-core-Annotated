@@ -50,6 +50,7 @@ public class RelationshipValidator implements Validator {
 	 *
 	 **/
 	@Override
+		// &begin[validate]
 	public void validate(Object target, Errors errors) {
 		Relationship relationship = (Relationship) target;
 		
@@ -69,5 +70,5 @@ public class RelationshipValidator implements Validator {
 		}
 		
 	}
-	
+	// &end[validate]
 }

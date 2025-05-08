@@ -178,8 +178,10 @@ public class DoubleRange implements Comparable<DoubleRange> {
 	 * <strong>Should</strong> return the same hashCode for objects representing the same interval
 	 */
 	@Override
+		// &begin[hashCode]
 	public int hashCode() {
 		return new HashCodeBuilder().append(low).append(high).build();
 	}
+	// &end[hashCode]
 	
 }

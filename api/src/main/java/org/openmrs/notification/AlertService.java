@@ -28,7 +28,9 @@ import org.openmrs.util.PrivilegeConstants;
  *   Context.getAlertService().saveAlert(alert);
  * </pre>
  */
+
 public interface AlertService extends OpenmrsService {
+
 	
 	/**
 	 * Used by Spring to set the specific/chosen database access implementation

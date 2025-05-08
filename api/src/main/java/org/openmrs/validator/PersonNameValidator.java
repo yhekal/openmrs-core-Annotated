@@ -48,6 +48,7 @@ public class PersonNameValidator implements Validator {
 	 * <strong>Should</strong> fail validation if field lengths are not correct
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object object, Errors errors) {
 		log.debug("{}.validate...", this.getClass().getName());
 		PersonName personName = (PersonName) object;
@@ -64,6 +65,7 @@ public class PersonNameValidator implements Validator {
 			errors.reject(e.getMessage());
 		}
 	}
+	// &end[validate]
 	
 	/**
 	 * Checks that the given {@link PersonName} is valid

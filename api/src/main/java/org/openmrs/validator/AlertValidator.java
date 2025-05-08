@@ -47,6 +47,7 @@ public class AlertValidator implements Validator {
 	 * <strong>Should</strong> fail validation if field lengths are not correct
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) throws APIException {
 		logger.debug("{}.validate...", this.getClass().getName());
 
@@ -60,3 +61,4 @@ public class AlertValidator implements Validator {
 
 	}
 }
+// &end[validate]

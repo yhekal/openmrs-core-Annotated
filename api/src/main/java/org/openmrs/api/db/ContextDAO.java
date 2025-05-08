@@ -95,7 +95,7 @@ public interface ContextDAO {
 	/**
 	 * Open session.
 	 */
-	public void openSession();
+	public void openSession(); 
 	
 	/**
 	 * Close session.
@@ -203,11 +203,6 @@ public interface ContextDAO {
 	 * @see Context#updateSearchIndexForType(Class)
 	 */
 	public void updateSearchIndexForType(Class<?> type);
-
-	/**
-	 * @see Context#updateSearchIndex(Class[])
-	 */
-	public void updateSearchIndex(Class<?>... types);
 
 	/**
 	 * @return a Connection from the OpenMRS database connection pool

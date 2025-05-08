@@ -338,16 +338,20 @@ public class ServiceContext implements ApplicationContextAware {
 	/**
 	 * @return alert service
 	 */
+// &begin[getAlertService]
 	public AlertService getAlertService() {
 		return getService(AlertService.class);
 	}
+	// &end[getAlertService]
 	
 	/**
 	 * @param alertService
 	 */
+// &begin[setAlertService]
 	public void setAlertService(AlertService alertService) {
 		setService(AlertService.class, alertService);
 	}
+	// &end[setAlertService]
 	
 	/**
 	 * @param programWorkflowService
@@ -776,7 +780,7 @@ public class ServiceContext implements ApplicationContextAware {
 				if (cls != null && log.isDebugEnabled()) {
 					try {
 						log.debug("cls classloader: {} uid: {}", cls.getClass().getClassLoader(),
-						    cls.getClass().getClassLoader().hashCode());
+						    cls.getClass().getClassLoader().hashCode()); // &line[hashCode]
 					}
 					catch (Exception e) { /*pass*/}
 				}
@@ -784,7 +788,7 @@ public class ServiceContext implements ApplicationContextAware {
 				try {
 					cls = Class.forName(classString);
 					log.debug("cls2 classloader: {} uid: {}", cls.getClass().getClassLoader(),
-					    cls.getClass().getClassLoader().hashCode());
+					    cls.getClass().getClassLoader().hashCode()); // &line[hashCode]
 					//pay attention that here, cls = Class.forName(classString), the system class loader and
 					//cls2 is the openmrs class loader, like above.
 					log.debug("cls==cls2: {}",

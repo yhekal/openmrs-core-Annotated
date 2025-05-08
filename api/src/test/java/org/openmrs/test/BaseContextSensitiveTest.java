@@ -84,6 +84,7 @@ import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.api.context.ContextMockHelper;
 import org.openmrs.api.context.Credentials;
 import org.openmrs.api.context.UsernamePasswordCredentials;
+import org.openmrs.module.ModuleConstants;
 import org.openmrs.util.DatabaseUtil;
 import org.openmrs.util.OpenmrsClassLoader;
 import org.openmrs.util.OpenmrsConstants;
@@ -356,6 +357,9 @@ public abstract class BaseContextSensitiveTest extends AbstractJUnit4SpringConte
 			//after that, just update, if there are any changes. This is for performance reasons.
 			runtimeProperties.setProperty(Environment.HBM2DDL_AUTO, "update");
 		}
+		
+		// we don't want to try to load core modules in tests
+		runtimeProperties.setProperty(ModuleConstants.IGNORE_CORE_MODULES_PROPERTY, "true");
 		
 		try {
 			File tempappdir = File.createTempFile("appdir-for-unit-tests-", "");
@@ -925,7 +929,7 @@ public abstract class BaseContextSensitiveTest extends AbstractJUnit4SpringConte
 	public void baseSetupWithStandardDataAndAuthentication() throws SQLException {
 		// Open a session if needed
 		if (!Context.isSessionOpen()) {
-			Context.openSession();
+			Context.openSession(); // &line[openSession]
 		}
 		
 		// The skipBaseSetup flag is controlled by the @SkipBaseSetup annotation. 		if (useInMemoryDatabase()) {
@@ -958,7 +962,7 @@ public abstract class BaseContextSensitiveTest extends AbstractJUnit4SpringConte
 			}
 		}
 		
-		Context.clearSession();
+		Context.clearSession(); // &line[clearSession]
 	}
 	
 	public Class<?>[] getIndexedTypes() {

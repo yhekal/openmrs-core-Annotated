@@ -39,6 +39,7 @@ public class ImplementationIdValidator implements Validator {
 	 */
 
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) throws APIException {
 		ImplementationId implId = (ImplementationId) obj;
 		char[] illegalChars = { '^', '|' };
@@ -53,4 +54,5 @@ public class ImplementationIdValidator implements Validator {
 			}
 		}
 	}
+	// &end[validate]
 }

@@ -129,6 +129,7 @@ public class ConceptReferenceTermMap extends BaseConceptMap {
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
+		// &begin[hashCode]
 	public int hashCode() {
 		if (this.conceptReferenceTermMapId == null) {
 			return super.hashCode();
@@ -137,6 +138,7 @@ public class ConceptReferenceTermMap extends BaseConceptMap {
 		hash = hash + 31 * this.conceptReferenceTermMapId;
 		return hash;
 	}
+	// &end[hashCode]
 	
 	/**
 	 * @see java.lang.Object#toString()

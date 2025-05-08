@@ -135,9 +135,9 @@ public class HttpClient {
 			// datum
 			
 			// finally, setup the actual post string
-			data.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
+			data.append(URLEncoder.encode(entry.getKey(), "UTF-8")); // &line[URLEncoder_encode]
 			data.append("=");
-			data.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+			data.append(URLEncoder.encode(entry.getValue(), "UTF-8")); // &line[URLEncoder_encode]
 		}
 		return data;
 	}

@@ -51,6 +51,7 @@ public class PatientIdentifierTypeValidator implements Validator {
 	 * <strong>Should</strong> fail validation if field lengths are not correct
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) {
 		PatientIdentifierType identifierType = (PatientIdentifierType) obj;
 		if (identifierType == null) {
@@ -67,4 +68,5 @@ public class PatientIdentifierTypeValidator implements Validator {
 			}
 		}
 	}
+	// &end[validate]
 }

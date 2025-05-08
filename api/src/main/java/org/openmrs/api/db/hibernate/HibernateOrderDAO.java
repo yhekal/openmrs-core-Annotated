@@ -94,7 +94,7 @@ public class HibernateOrderDAO implements OrderDAO {
 	 */
 	@Override
 	public Order saveOrder(Order order) throws DAOException {
-		sessionFactory.getCurrentSession().saveOrUpdate(order);
+		sessionFactory.getCurrentSession().saveOrUpdate(order); // &line[getCurrentSession]
 		
 		return order;
 	}
@@ -105,7 +105,7 @@ public class HibernateOrderDAO implements OrderDAO {
 	 */
 	@Override
 	public void deleteOrder(Order order) throws DAOException {
-		sessionFactory.getCurrentSession().delete(order);
+		sessionFactory.getCurrentSession().delete(order); // &line[getCurrentSession]
 	}
 	
 	/**
@@ -115,7 +115,7 @@ public class HibernateOrderDAO implements OrderDAO {
 	public Order getOrder(Integer orderId) throws DAOException {
 		log.debug("getting order #{}", orderId);
 		
-		return sessionFactory.getCurrentSession().get(Order.class, orderId);
+		return sessionFactory.getCurrentSession().get(Order.class, orderId); // &line[getCurrentSession]
 	}
 	
 	/**
@@ -125,7 +125,7 @@ public class HibernateOrderDAO implements OrderDAO {
 	@Override
 	public List<Order> getOrders(OrderType orderType, List<Patient> patients, List<Concept> concepts, List<User> orderers, List<Encounter> encounters) {
 
-		Session session = sessionFactory.getCurrentSession();
+		Session session = sessionFactory.getCurrentSession(); // &line[getCurrentSession]
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<Order> cq = cb.createQuery(Order.class);
 		Root<Order> root = cq.from(Order.class);
@@ -166,7 +166,7 @@ public class HibernateOrderDAO implements OrderDAO {
 	 */
 	@Override
 	public List<Order> getOrders(OrderSearchCriteria searchCriteria) {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = sessionFactory.getCurrentSession(); // &line[getCurrentSession]
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<Order> cq = cb.createQuery(Order.class);
 		Root<Order> root = cq.from(Order.class);
@@ -294,8 +294,8 @@ public class HibernateOrderDAO implements OrderDAO {
 	@Override
 	public List<Order> getOrders(Patient patient, Visit visit, CareSetting careSetting, List<OrderType> orderTypes, boolean includeVoided,
 	        boolean includeDiscontinuationOrders) {
-		Session session = sessionFactory.getCurrentSession();
-		CriteriaBuilder cb = session.getCriteriaBuilder();
+		Session session = sessionFactory.getCurrentSession(); // &line[getCurrentSession]
+		CriteriaBuilder cb = session.getCriteriaBuilder(); 
 		CriteriaQuery<Order> cq = cb.createQuery(Order.class);
 		Root<Order> root = cq.from(Order.class);
 
@@ -319,7 +319,7 @@ public class HibernateOrderDAO implements OrderDAO {
 	 */
 	@Override
 	public Order getDiscontinuationOrder(Order order) {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = sessionFactory.getCurrentSession(); // &line[getCurrentSession]
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<Order> cq = cb.createQuery(Order.class);
 		Root<Order> root = cq.from(Order.class);
@@ -335,7 +335,7 @@ public class HibernateOrderDAO implements OrderDAO {
 	
 	@Override
 	public Order getRevisionOrder(Order order) throws APIException {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = sessionFactory.getCurrentSession(); // &line[getCurrentSession]
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<Order> cq = cb.createQuery(Order.class);
 		Root<Order> root = cq.from(Order.class);
@@ -356,8 +356,8 @@ public class HibernateOrderDAO implements OrderDAO {
 		if (isOrderADrugOrder) {
 			sql = " SELECT o.patient_id, o.care_setting, o.concept_id, d.drug_inventory_id "
 			        + " FROM orders o, drug_order d WHERE o.order_id = d.order_id AND o.order_id = :orderId";
-		}
-		Query query = sessionFactory.getCurrentSession().createSQLQuery(sql);
+		} 
+		Query query = sessionFactory.getCurrentSession().createSQLQuery(sql); // &line[getCurrentSession]
 		query.setParameter("orderId", order.getOrderId());
 		
 		//prevent jpa from flushing before fetching the list
@@ -371,7 +371,7 @@ public class HibernateOrderDAO implements OrderDAO {
 	 */
 	@Override
 	public OrderGroup saveOrderGroup(OrderGroup orderGroup) throws DAOException {
-		sessionFactory.getCurrentSession().saveOrUpdate(orderGroup);
+		sessionFactory.getCurrentSession().saveOrUpdate(orderGroup); // &line[getCurrentSession]
 		return orderGroup;
 	}
 	
@@ -390,7 +390,7 @@ public class HibernateOrderDAO implements OrderDAO {
 	 */
 	@Override
 	public OrderGroup getOrderGroupById(Integer orderGroupId) throws DAOException {
-		return sessionFactory.getCurrentSession().get(OrderGroup.class, orderGroupId);
+		return sessionFactory.getCurrentSession().get(OrderGroup.class, orderGroupId); // &line[getCurrentSession]
 	}
 	
 	/**

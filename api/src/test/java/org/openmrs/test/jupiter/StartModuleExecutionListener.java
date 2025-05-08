@@ -77,7 +77,7 @@ public class StartModuleExecutionListener extends AbstractTestExecutionListener 
 				lastClassRun = testContext.getTestClass().getSimpleName();
 				
 				if (!Context.isSessionOpen())
-					Context.openSession();
+					Context.openSession(); // &line[openSession]
 				
 				
 				ModuleUtil.shutdown();
@@ -161,7 +161,7 @@ public class StartModuleExecutionListener extends AbstractTestExecutionListener 
 		
 		if (startModuleAnnotation != null) {
 			if (!Context.isSessionOpen()) {
-				Context.openSession();
+				Context.openSession(); // &line[openSession]
 			}
 			
 			// re-registering the bean definitions that we may have removed
@@ -173,7 +173,7 @@ public class StartModuleExecutionListener extends AbstractTestExecutionListener 
 			
 			ModuleUtil.shutdown();
 			
-			Context.closeSession();
+			Context.closeSession(); // &line[closeSession]
 		}
 	}
 }

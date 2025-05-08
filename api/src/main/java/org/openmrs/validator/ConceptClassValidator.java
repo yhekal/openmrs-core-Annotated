@@ -49,6 +49,7 @@ public class ConceptClassValidator implements Validator {
 	 */
 	
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) {
 		ConceptClass cc = (ConceptClass) obj;
 		if (cc == null) {
@@ -64,5 +65,6 @@ public class ConceptClassValidator implements Validator {
 			ValidateUtil.validateFieldLengths(errors, obj.getClass(), "name", "description", "retireReason");
 		}
 	}
+	// &end[validate]
 	
 }

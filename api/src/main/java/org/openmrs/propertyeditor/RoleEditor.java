@@ -42,7 +42,7 @@ public class RoleEditor extends PropertyEditorSupport {
 		UserService es = Context.getUserService();
 		if (StringUtils.hasText(text)) {
 			try {
-				Role r = es.getRole(text);
+				Role r = es.getRole(text); // &line[getRole]
 				setValue(r);
 				//when a role is not found, no exception is generated. throw one to execute the catch block
 				if (r == null) {
@@ -50,7 +50,7 @@ public class RoleEditor extends PropertyEditorSupport {
 				}
 			}
 			catch (Exception ex) {
-				Role r = es.getRoleByUuid(text);
+				Role r = es.getRoleByUuid(text); // &line[getRoleByUuid]
 				setValue(r);
 				if (r == null) {
 					log.error("Error setting text: " + text, ex);
@@ -68,7 +68,7 @@ public class RoleEditor extends PropertyEditorSupport {
 		if (r == null) {
 			return "";
 		} else {
-			return r.getRole();
+			return r.getRole(); // &line[getRole]
 		}
 	}
 	

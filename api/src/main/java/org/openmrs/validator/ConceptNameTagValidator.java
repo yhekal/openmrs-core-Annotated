@@ -49,6 +49,7 @@ public class ConceptNameTagValidator implements Validator {
 	 */
 	
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) {
 		ConceptNameTag cnt = (ConceptNameTag) obj;
 		if (cnt == null) {
@@ -66,4 +67,5 @@ public class ConceptNameTagValidator implements Validator {
 			ValidateUtil.validateFieldLengths(errors, obj.getClass(), "tag", "voidReason");
 		}
 	}
+	// &end[validate]
 }

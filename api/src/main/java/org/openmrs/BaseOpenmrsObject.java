@@ -57,12 +57,14 @@ public abstract class BaseOpenmrsObject implements Serializable, OpenmrsObject {
 	 * <strong>Should</strong> not fail if uuid is null
 	 */
 	@Override
+		// &begin[hashCode]
 	public int hashCode() {
 		if (getUuid() == null) {
 			return super.hashCode();
 		}
 		return getUuid().hashCode();
 	}
+	// &end[hashCode]
 	
 	/**
 	 * Returns <code>true</code> if and only if <code>x</code> and <code>y</code> refer to the same
@@ -114,6 +116,6 @@ public abstract class BaseOpenmrsObject implements Serializable, OpenmrsObject {
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("hashCode",
-		    Integer.toHexString(hashCode())).append("uuid", getUuid()).build();
+		    Integer.toHexString(hashCode())).append("uuid", getUuid()).build(); // &line[hashCode]
 	}
 }

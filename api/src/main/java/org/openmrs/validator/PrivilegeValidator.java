@@ -45,6 +45,7 @@ public class PrivilegeValidator implements Validator {
 	 * <strong>Should</strong> fail validation if field lengths are not correct
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) {
 		Privilege privilege = (Privilege) obj;
 		if (privilege == null) {
@@ -54,5 +55,6 @@ public class PrivilegeValidator implements Validator {
 			ValidateUtil.validateFieldLengths(errors, obj.getClass(), "privilege", "description");
 		}
 	}
+	// &end[validate]
 	
 }

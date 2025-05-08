@@ -52,6 +52,7 @@ public class OrderFrequencyValidator implements Validator {
 	 * <strong>Should</strong> fail validation if field lengths are not correct
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) {
 		OrderFrequency orderFrequency = (OrderFrequency) obj;
 		if (orderFrequency == null) {
@@ -73,4 +74,5 @@ public class OrderFrequencyValidator implements Validator {
 			ValidateUtil.validateFieldLengths(errors, obj.getClass(), "retireReason");
 		}
 	}
+	// &end[validate]
 }

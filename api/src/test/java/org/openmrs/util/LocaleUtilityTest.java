@@ -332,7 +332,7 @@ public class LocaleUtilityTest extends BaseContextSensitiveTest {
 		    LocaleUtility.getDefaultLocale());
 		
 		// open a session
-		Context.openSession();
+		Context.openSession(); // &line[openSession]
 		authenticate();
 		
 		// verify that the default locale is the GP default locale

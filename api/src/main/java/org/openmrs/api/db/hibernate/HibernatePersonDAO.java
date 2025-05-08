@@ -34,8 +34,8 @@ import org.openmrs.RelationshipType;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.db.DAOException;
 import org.openmrs.api.db.PersonDAO;
-import org.openmrs.api.db.hibernate.search.SearchQueryUnique;
-import org.openmrs.api.db.hibernate.search.session.SearchSessionFactory;
+import org.openmrs.api.db.hibernate.search.LuceneQuery;
+import org.openmrs.collection.ListPart;
 import org.openmrs.person.PersonMergeLog;
 import org.openmrs.util.OpenmrsConstants;
 import org.slf4j.Logger;
@@ -63,8 +63,6 @@ public class HibernatePersonDAO implements PersonDAO {
 	 */
 	private SessionFactory sessionFactory;
 	
-	private SearchSessionFactory searchSessionFactory;
-	
 	/**
 	 * Set session factory
 	 * 
@@ -73,11 +71,7 @@ public class HibernatePersonDAO implements PersonDAO {
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
-
-	public void setSearchSessionFactory(SearchSessionFactory searchSessionFactory) {
-		this.searchSessionFactory = searchSessionFactory;
-	}
-
+	
 	/**
 	 * This method executes a Lucene search on persons based on the soundex filter with one search name given
 	 * 
@@ -88,14 +82,16 @@ public class HibernatePersonDAO implements PersonDAO {
 	 * @return the set of Persons that match the search criteria 
 	 */
 	private Set<Person> executeSoundexOnePersonNameQuery(String name, Integer birthyear, boolean includeVoided , String gender) {
-		PersonQuery personQuery = new PersonQuery();
-
-		List<Person> results = SearchQueryUnique.search(searchSessionFactory, SearchQueryUnique.newQuery(PersonName.class,
-				f -> personQuery.getSoundexPersonNameQuery(f, name, birthyear, includeVoided,
-					gender), "person.personId", PersonName::getPerson), null,
-			HibernatePersonDAO.getMaximumSearchResults());
+		PersonLuceneQuery personLuceneQuery = new PersonLuceneQuery(sessionFactory);
+		String query = LuceneQuery.escapeQuery(name);
+		int maxResults = HibernatePersonDAO.getMaximumSearchResults();
+		LinkedHashSet<Person> people = new LinkedHashSet<>();
 		
-		return new LinkedHashSet<>(results);
+		LuceneQuery<PersonName> luceneQuery = personLuceneQuery.getSoundexPersonNameQuery(query, birthyear, false, gender);
+		ListPart<Object[]> names = luceneQuery.listPartProjection(0, maxResults, "person.personId");
+		names.getList().forEach(x -> people.add(getPerson((Integer) x[0])));
+		
+		return people;
 	}
 	
 	
@@ -110,16 +106,16 @@ public class HibernatePersonDAO implements PersonDAO {
 	 * @param gender of the person to search for 
 	 * @return the set of Persons that match the search criteria 
 	 */
-	private Set<Person> executeSoundexThreePersonNamesQuery(String name1, String name2, String name3, Integer birthyear, 
-															boolean includeVoided , String gender) {
-		PersonQuery personQuery = new PersonQuery();
-
-		List<Person> results = SearchQueryUnique.search(searchSessionFactory, SearchQueryUnique.newQuery(PersonName.class,
-				f -> personQuery.getSoundexPersonNameSearchOnThreeNames(f, name1, name2, name3,
-					birthyear, includeVoided, gender), "person.personId",  PersonName::getPerson),
-			null, HibernatePersonDAO.getMaximumSearchResults());
+	private Set<Person> executeSoundexThreePersonNamesQuery(String name1, String name2, String name3, Integer birthyear, boolean includeVoided , String gender) {
+		PersonLuceneQuery personLuceneQuery = new PersonLuceneQuery(sessionFactory);
+		int maxResults = HibernatePersonDAO.getMaximumSearchResults();
+		LinkedHashSet<Person> people = new LinkedHashSet<>();
 		
-		return new LinkedHashSet<>(results);
+		LuceneQuery<PersonName> luceneQuery = personLuceneQuery.getSoundexPersonNameSearchOnThreeNames(name1, name2, name3, birthyear, false, gender);;
+		ListPart<Object[]> names = luceneQuery.listPartProjection(0, maxResults, "person.personId");
+		names.getList().forEach(x -> people.add(getPerson((Integer) x[0])));
+		
+		return people;
 	}
 	
 	/**
@@ -132,16 +128,16 @@ public class HibernatePersonDAO implements PersonDAO {
 	 * @param gender of the person to search for 
 	 * @return the set of Persons that match the search criteria
 	 */
-	private Set<Person> executeSoundexTwoPersonNamesQuery(String searchName1, String searchName2, Integer birthyear, 
-														  boolean includeVoided , String gender) {
-		PersonQuery personQuery = new PersonQuery();
-
-		List<Person> results = SearchQueryUnique.search(searchSessionFactory, SearchQueryUnique.newQuery(PersonName.class,
-				f -> personQuery.getSoundexPersonNameSearchOnTwoNames(f, searchName1, searchName2,
-					birthyear, includeVoided, gender), "person.personId", PersonName::getPerson), null,
-			HibernatePersonDAO.getMaximumSearchResults());
+	private Set<Person> executeSoundexTwoPersonNamesQuery(String searchName1, String searchName2, Integer birthyear, boolean includeVoided , String gender) {
+		PersonLuceneQuery personLuceneQuery = new PersonLuceneQuery(sessionFactory);
+		int maxResults = HibernatePersonDAO.getMaximumSearchResults();
+		LinkedHashSet<Person> people = new LinkedHashSet<>();
 		
-		return new LinkedHashSet<>(results);
+		LuceneQuery<PersonName> luceneQuery = personLuceneQuery.getSoundexPersonNameSearchOnTwoNames(searchName1, searchName2, birthyear, false, gender);;
+		ListPart<Object[]> names = luceneQuery.listPartProjection(0, maxResults, "person.personId");
+		names.getList().forEach(x -> people.add(getPerson((Integer) x[0])));
+		
+		return people;
 	}
 	
 	/**
@@ -153,16 +149,16 @@ public class HibernatePersonDAO implements PersonDAO {
 	 * @param gender of the person to search for 
 	 * @return the set of Persons that match the search criteria
 	 */
-	private Set<Person> executeSoundexNPersonNamesQuery(String[] searchNames, Integer birthyear, boolean includeVoided, 
-														String gender) {
-		PersonQuery personQuery = new PersonQuery();
-
-		List<Person> results = SearchQueryUnique.search(searchSessionFactory, SearchQueryUnique.newQuery(PersonName.class,
-				f -> personQuery.getSoundexPersonNameSearchOnNNames(f, searchNames, birthyear,
-					includeVoided, gender), "person.personId",  PersonName::getPerson), null, 
-			HibernatePersonDAO.getMaximumSearchResults());
+	private Set<Person> executeSoundexNPersonNamesQuery(String[] searchNames, Integer birthyear, boolean includeVoided , String gender) {
+		PersonLuceneQuery personLuceneQuery = new PersonLuceneQuery(sessionFactory);
+		int maxResults = HibernatePersonDAO.getMaximumSearchResults();
+		LinkedHashSet<Person> people = new LinkedHashSet<>();
 		
-		return new LinkedHashSet<>(results);
+		LuceneQuery<PersonName> luceneQuery = personLuceneQuery.getSoundexPersonNameSearchOnNNames(searchNames, birthyear, includeVoided, gender);
+		ListPart<Object[]> names = luceneQuery.listPartProjection(0, maxResults, "person.personId");
+		names.getList().forEach(x -> people.add(getPerson((Integer) x[0])));
+		
+		return people;
 		
 	}
 	
@@ -245,7 +241,7 @@ public class HibernatePersonDAO implements PersonDAO {
 		boolean includeVoided = (voided != null) ? voided : false;
 
 		if (StringUtils.isBlank(searchString)) {
-			Session session = sessionFactory.getCurrentSession();
+			Session session = sessionFactory.getCurrentSession(); // &line[getCurrentSession]
 			CriteriaBuilder cb = session.getCriteriaBuilder();
 			CriteriaQuery<Person> cq = cb.createQuery(Person.class);
 			Root<Person> root = cq.from(Person.class);
@@ -264,14 +260,24 @@ public class HibernatePersonDAO implements PersonDAO {
 			return session.createQuery(cq).setMaxResults(maxResults).getResultList();
 		}
 
-		PersonQuery personQuery = new PersonQuery();
+		String query = LuceneQuery.escapeQuery(searchString);
 
-		return SearchQueryUnique.search(searchSessionFactory, SearchQueryUnique.newQuery(PersonName.class,
-				f -> personQuery.getPersonNameQueryWithOrParser(f, searchString, includeVoided, dead),
-				"person.personId", PersonName::getPerson).join(SearchQueryUnique.newQuery(PersonAttribute.class,
-				f -> personQuery.getPersonAttributeQueryWithOrParser(f, searchString, includeVoided), 
-				"person.personId", PersonAttribute::getPerson)), null,
-			HibernatePersonDAO.getMaximumSearchResults());
+		PersonLuceneQuery personLuceneQuery = new PersonLuceneQuery(sessionFactory);
+
+		LuceneQuery<PersonName> nameQuery = personLuceneQuery.getPersonNameQueryWithOrParser(query, includeVoided);
+		if (dead != null) {
+			nameQuery.include("person.dead", dead);
+		}
+		List<Person> people = new ArrayList<>();
+
+		ListPart<Object[]> names = nameQuery.listPartProjection(0, maxResults, "person.personId");
+		names.getList().forEach(name -> people.add(getPerson((Integer) name[0])));
+
+		LuceneQuery<PersonAttribute> attributeQuery = personLuceneQuery.getPersonAttributeQueryWithOrParser(query, includeVoided, nameQuery);
+		ListPart<Object[]> attributes = attributeQuery.listPartProjection(0, maxResults, "person.personId");
+		attributes.getList().forEach(attribute -> people.add(getPerson((Integer) attribute[0])));
+
+		return people;
 	}
 	
 	@Override
@@ -305,7 +311,7 @@ public class HibernatePersonDAO implements PersonDAO {
 	 */
 	@Override
 	public Person getPerson(Integer personId) {
-		return sessionFactory.getCurrentSession().get(Person.class, personId);
+		return sessionFactory.getCurrentSession().get(Person.class, personId); // &line[getCurrentSession]
 	}
 	
 	/**
@@ -314,7 +320,7 @@ public class HibernatePersonDAO implements PersonDAO {
 	 */
 	@Override
 	public void deletePersonAttributeType(PersonAttributeType type) {
-		sessionFactory.getCurrentSession().delete(type);
+		sessionFactory.getCurrentSession().delete(type); // &line[getCurrentSession]
 	}
 	
 	/**
@@ -323,7 +329,7 @@ public class HibernatePersonDAO implements PersonDAO {
 	 */
 	@Override
 	public PersonAttributeType savePersonAttributeType(PersonAttributeType type) {
-		sessionFactory.getCurrentSession().saveOrUpdate(type);
+		sessionFactory.getCurrentSession().saveOrUpdate(type); // &line[getCurrentSession]
 		return type;
 	}
 	
@@ -333,7 +339,7 @@ public class HibernatePersonDAO implements PersonDAO {
 	 */
 	@Override
 	public PersonAttributeType getPersonAttributeType(Integer typeId) {
-		return sessionFactory.getCurrentSession().get(PersonAttributeType.class, typeId);
+		return sessionFactory.getCurrentSession().get(PersonAttributeType.class, typeId); // &line[getCurrentSession]
 	}
 	
 	/**
@@ -342,7 +348,7 @@ public class HibernatePersonDAO implements PersonDAO {
 	 */
 	@Override
 	public PersonAttribute getPersonAttribute(Integer id) {
-		return sessionFactory.getCurrentSession().get(PersonAttribute.class, id);
+		return sessionFactory.getCurrentSession().get(PersonAttribute.class, id); // &line[getCurrentSession]
 	}
 	
 	/**
@@ -351,7 +357,7 @@ public class HibernatePersonDAO implements PersonDAO {
 	 */
 	@Override
 	public List<PersonAttributeType> getAllPersonAttributeTypes(boolean includeRetired) throws DAOException {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = sessionFactory.getCurrentSession(); // &line[getCurrentSession]
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<PersonAttributeType> cq = cb.createQuery(PersonAttributeType.class);
 		Root<PersonAttributeType> root = cq.from(PersonAttributeType.class);
@@ -372,7 +378,7 @@ public class HibernatePersonDAO implements PersonDAO {
 	@Override
 	// TODO - PersonServiceTest fails here
 	public List<PersonAttributeType> getPersonAttributeTypes(String exactName, String format, Integer foreignKey, Boolean searchable) throws DAOException {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = sessionFactory.getCurrentSession(); // &line[getCurrentSession]
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<PersonAttributeType> cq = cb.createQuery(PersonAttributeType.class);
 		Root<PersonAttributeType> root = cq.from(PersonAttributeType.class);
@@ -406,7 +412,7 @@ public class HibernatePersonDAO implements PersonDAO {
 	@Override
 	public Relationship getRelationship(Integer relationshipId) throws DAOException {
 
-		return sessionFactory.getCurrentSession()
+		return sessionFactory.getCurrentSession() // &line[getCurrentSession]
 		        .get(Relationship.class, relationshipId);
 	}
 	
@@ -416,7 +422,7 @@ public class HibernatePersonDAO implements PersonDAO {
 	 */
 	@Override
 	public List<Relationship> getAllRelationships(boolean includeVoided) throws DAOException {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = sessionFactory.getCurrentSession(); // &line[getCurrentSession]
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<Relationship> cq = cb.createQuery(Relationship.class);
 		Root<Relationship> root = cq.from(Relationship.class);
@@ -437,7 +443,7 @@ public class HibernatePersonDAO implements PersonDAO {
 	 */
 	@Override
 	public List<Relationship> getRelationships(Person fromPerson, Person toPerson, RelationshipType relType) {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = sessionFactory.getCurrentSession(); // &line[getCurrentSession]
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<Relationship> cq = cb.createQuery(Relationship.class);
 		Root<Relationship> root = cq.from(Relationship.class);
@@ -468,7 +474,7 @@ public class HibernatePersonDAO implements PersonDAO {
 	 */
 	@Override
 	public List<Relationship> getRelationships(Person fromPerson, Person toPerson, RelationshipType relType, Date startEffectiveDate, Date endEffectiveDate) {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = sessionFactory.getCurrentSession(); // &line[getCurrentSession]
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<Relationship> cq = cb.createQuery(Relationship.class);
 		Root<Relationship> root = cq.from(Relationship.class);
@@ -523,7 +529,7 @@ public class HibernatePersonDAO implements PersonDAO {
 	 */
 	@Override
 	public RelationshipType getRelationshipType(Integer relationshipTypeId) throws DAOException {
-		return sessionFactory.getCurrentSession().get(
+		return sessionFactory.getCurrentSession().get( // &line[getCurrentSession]
 		    RelationshipType.class, relationshipTypeId);
 	}
 	
@@ -533,7 +539,7 @@ public class HibernatePersonDAO implements PersonDAO {
 	 */
 	@Override
 	public List<RelationshipType> getRelationshipTypes(String relationshipTypeName, Boolean preferred) throws DAOException {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = sessionFactory.getCurrentSession(); // &line[getCurrentSession]
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<RelationshipType> cq = cb.createQuery(RelationshipType.class);
 		Root<RelationshipType> root = cq.from(RelationshipType.class);
@@ -562,7 +568,7 @@ public class HibernatePersonDAO implements PersonDAO {
 	 */
 	@Override
 	public RelationshipType saveRelationshipType(RelationshipType relationshipType) throws DAOException {
-		sessionFactory.getCurrentSession().saveOrUpdate(relationshipType);
+		sessionFactory.getCurrentSession().saveOrUpdate(relationshipType); // &line[getCurrentSession]
 		return relationshipType;
 	}
 	
@@ -572,7 +578,7 @@ public class HibernatePersonDAO implements PersonDAO {
 	 */
 	@Override
 	public void deleteRelationshipType(RelationshipType relationshipType) throws DAOException {
-		sessionFactory.getCurrentSession().delete(relationshipType);
+		sessionFactory.getCurrentSession().delete(relationshipType); // &line[getCurrentSession]
 	}
 	
 	/**

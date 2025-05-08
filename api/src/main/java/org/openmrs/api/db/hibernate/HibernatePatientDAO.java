@@ -30,8 +30,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.persister.entity.AbstractEntityPersister;
-import org.hibernate.search.engine.search.predicate.SearchPredicate;
-import org.hibernate.search.engine.search.predicate.dsl.SearchPredicateFactory;
 import org.openmrs.Allergies;
 import org.openmrs.Allergy;
 import org.openmrs.Location;
@@ -46,8 +44,8 @@ import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.db.DAOException;
 import org.openmrs.api.db.PatientDAO;
-import org.openmrs.api.db.hibernate.search.SearchQueryUnique;
-import org.openmrs.api.db.hibernate.search.session.SearchSessionFactory;
+import org.openmrs.api.db.hibernate.search.LuceneQuery;
+import org.openmrs.collection.ListPart;
 import org.openmrs.util.OpenmrsConstants;
 import org.openmrs.util.OpenmrsUtil;
 import org.slf4j.Logger;
@@ -69,8 +67,6 @@ public class HibernatePatientDAO implements PatientDAO {
 	 */
 	private SessionFactory sessionFactory;
 	
-	private SearchSessionFactory searchSessionFactory;
-	
 	/**
 	 * Set session factory
 	 *
@@ -78,10 +74,6 @@ public class HibernatePatientDAO implements PatientDAO {
 	 */
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
-	}
-
-	public void setSearchSessionFactory(SearchSessionFactory searchSessionFactory) {
-		this.searchSessionFactory = searchSessionFactory;
 	}
 
 	/**
@@ -695,28 +687,24 @@ public class HibernatePatientDAO implements PatientDAO {
 		if (StringUtils.isBlank(query)) {
 			return 0L;
 		}
+		String tmpQuery = LuceneQuery.escapeQuery(query);
 
-		PersonQuery personQuery = new PersonQuery();
+		LuceneQuery<PatientIdentifier> identifierQuery = getPatientIdentifierLuceneQuery(tmpQuery, includeVoided, false);
 
-		return SearchQueryUnique.searchCount(searchSessionFactory,
-			SearchQueryUnique.newQuery(PatientIdentifier.class, f ->
-					newPatientIdentifierSearchPredicate(f, query, includeVoided, false),
-				 "patient.personId", PatientIdentifier::getPatient).join(
-					 SearchQueryUnique.newQuery(PersonName.class, f ->
-						personQuery.getPatientNameQuery(f, query, includeVoided),
-					 "person.personId", pN -> getPatient(pN.getPerson().getId())).join(
-						 SearchQueryUnique.newQuery(PersonAttribute.class,
-						f -> personQuery.getPatientAttributeQuery(f, query, includeVoided),
-						 "person.personId", pA -> getPatient(pA.getPerson().getId())
-					))));
+		PersonLuceneQuery personLuceneQuery = new PersonLuceneQuery(sessionFactory);
+
+		LuceneQuery<PersonName> nameQuery = personLuceneQuery.getPatientNameQuery(tmpQuery, includeVoided, identifierQuery);
+		LuceneQuery<PersonAttribute> attributeQuery = personLuceneQuery.getPatientAttributeQuery(tmpQuery, includeVoided, nameQuery);
+
+		return identifierQuery.resultSize() + nameQuery.resultSize() + attributeQuery.resultSize();
 	}
 
     private List<Patient> findPatients(String query, boolean includeVoided) {
 		return findPatients(query, includeVoided, null, null);
 	}
 	
-	private List<Patient> findPatients(String query, List<PatientIdentifierType> identifierTypes, boolean matchExactly, 
-									   Integer start, Integer length) {
+	private List<Patient> findPatients(String query, List<PatientIdentifierType> identifierTypes, boolean matchExactly, Integer start, Integer length) {
+		String tmpQuery = query;
 		Integer tmpStart = start;
 		
 		if (tmpStart == null) {
@@ -727,30 +715,38 @@ public class HibernatePatientDAO implements PatientDAO {
 		if (tmpLength == null || tmpLength > maxLength) {
 			tmpLength = maxLength;
 		}
+		tmpQuery = LuceneQuery.escapeQuery(tmpQuery);
+		
 		List<Patient> patients = new LinkedList<>();
 		
 		String minChars = Context.getAdministrationService().getGlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_MIN_SEARCH_CHARACTERS);
 		
-		if (!StringUtils.isNumeric(minChars)) {
+		if (minChars == null || !StringUtils.isNumeric(minChars)) {
 			minChars = "" + OpenmrsConstants.GLOBAL_PROPERTY_DEFAULT_MIN_SEARCH_CHARACTERS;
 		}
-		if (query.length() < Integer.parseInt(minChars)) {
+		if (tmpQuery.length() < Integer.valueOf(minChars)) {
 			return patients;
 		}
+		LuceneQuery<PatientIdentifier> identifierQuery = getPatientIdentifierLuceneQuery(tmpQuery, identifierTypes, matchExactly);
 		
-		return SearchQueryUnique.search(searchSessionFactory, SearchQueryUnique.newQuery(PatientIdentifier.class, 
-			f -> f.bool().with(b -> {
-			b.must(getPatientIdentifierSearchPredicate(f, query, matchExactly));
-			List<Integer> identifierTypeIds = new ArrayList<Integer>();
-			for(PatientIdentifierType identifierType : identifierTypes) {
-				identifierTypeIds.add(identifierType.getId());
-			}
-			b.filter(f.terms().field("identifierType.patientIdentifierTypeId").matchingAny(identifierTypeIds));
-			b.filter(f.match().field("patient.isPatient").matching(true));
-		}).toPredicate(), "patient.personId", PatientIdentifier::getPatient), tmpStart, tmpLength);
+		long identifiersSize = identifierQuery.resultSize();
+		if (identifiersSize > tmpStart) {
+			ListPart<Object[]> patientIdentifiers = identifierQuery.listPartProjection(tmpStart, tmpLength, "patient.personId");
+			patientIdentifiers.getList().forEach(patientIdentifier -> patients.add(getPatient((Integer) patientIdentifier[0])));
+			
+			tmpLength -= patientIdentifiers.getList().size();
+			tmpStart = 0;
+		} else {
+			tmpStart -= (int) identifiersSize;
+		}
+		
+		if (tmpLength == 0) {
+			return patients;
+		}
+		return patients;
 	}
 	
-	public List<Patient> findPatients(String query, boolean includeVoided, Integer start, Integer length) {
+	public List<Patient> findPatients(String query, boolean includeVoided, Integer start, Integer length){
 		Integer tmpStart = start;
 		if (tmpStart == null) {
 			tmpStart = 0;
@@ -760,70 +756,110 @@ public class HibernatePatientDAO implements PatientDAO {
 		if (tmpLength == null || tmpLength > maxLength) {
 			tmpLength = maxLength;
 		}
+		query = LuceneQuery.escapeQuery(query);
 
 		List<Patient> patients = new LinkedList<>();
 
-		String minChars = Context.getAdministrationService().getGlobalProperty(
-			OpenmrsConstants.GLOBAL_PROPERTY_MIN_SEARCH_CHARACTERS);
+		String minChars = Context.getAdministrationService().getGlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_MIN_SEARCH_CHARACTERS);
 
-		if (!StringUtils.isNumeric(minChars)) {
+		if (minChars == null || !StringUtils.isNumeric(minChars)) {
 			minChars = "" + OpenmrsConstants.GLOBAL_PROPERTY_DEFAULT_MIN_SEARCH_CHARACTERS;
 		}
-		if (query.length() < Integer.parseInt(minChars)) {
+		if (query.length() < Integer.valueOf(minChars)) {
 			return patients;
 		}
 
-		PersonQuery personQuery = new PersonQuery();
+		LuceneQuery<PatientIdentifier> identifierQuery = getPatientIdentifierLuceneQuery(query, includeVoided, false);
 
-		patients = SearchQueryUnique.search(searchSessionFactory,
-			SearchQueryUnique.newQuery(PatientIdentifier.class, f -> 
-					newPatientIdentifierSearchPredicate(f, query, includeVoided, false), 
-				 "patient.personId", PatientIdentifier::getPatient).join(
-					 SearchQueryUnique.newQuery(PersonName.class, f -> 
-					personQuery.getPatientNameQuery(f, query, includeVoided),
-					 "person.personId", pN -> getPatient(pN.getPerson().getId())).join(
-						 SearchQueryUnique.newQuery(PersonAttribute.class,
-						f -> personQuery.getPatientAttributeQuery(f, query, includeVoided), 
-						"person.personId", pA -> getPatient(pA.getPerson().getId())
-						))), start, length);
+		long identifiersSize = identifierQuery.resultSize();
+		if (identifiersSize > tmpStart) {
+			ListPart<Object[]> patientIdentifiers = identifierQuery.listPartProjection(tmpStart, tmpLength, "patient.personId");
+			patientIdentifiers.getList().forEach(patientIdentifier -> patients.add(getPatient((Integer) patientIdentifier[0])));
+
+			tmpLength -= patientIdentifiers.getList().size();
+			tmpStart = 0;
+		} else {
+			tmpStart -= (int) identifiersSize;
+		}
+
+		if (tmpLength == 0) {
+			return patients;
+		}
+
+		PersonLuceneQuery personLuceneQuery = new PersonLuceneQuery(sessionFactory);
+
+		LuceneQuery<PersonName> nameQuery = personLuceneQuery.getPatientNameQuery(query, includeVoided, identifierQuery);
+		long namesSize = nameQuery.resultSize();
+		if (namesSize > tmpStart) {
+			ListPart<Object[]> personNames = nameQuery.listPartProjection(tmpStart, tmpLength, "person.personId");
+			personNames.getList().forEach(personName -> patients.add(getPatient((Integer) personName[0])));
+
+			tmpLength -= personNames.getList().size();
+			tmpStart = 0;
+		} else {
+			tmpStart -= (int) namesSize;
+		}
+
+		if (tmpLength == 0) {
+			return patients;
+		}
+
+		LuceneQuery<PersonAttribute> attributeQuery = personLuceneQuery.getPatientAttributeQuery(query, includeVoided, nameQuery);
+		long attributesSize = attributeQuery.resultSize();
+		if (attributesSize > tmpStart) {
+			ListPart<Object[]> personAttributes = attributeQuery.listPartProjection(tmpStart, tmpLength, "person.personId");
+			personAttributes.getList().forEach(personAttribute -> patients.add(getPatient((Integer) personAttribute[0])));
+		}
 
 		return patients;
 	}
-	
-	private SearchPredicate getPatientIdentifierSearchPredicate(SearchPredicateFactory f, String paramQuery, boolean matchExactly) {
-		List<String> tokens = tokenizeIdentifierQuery(removeIdentifierPadding(paramQuery));
-		final String query = StringUtils.join(tokens, " | ");
-		//TODO: hibernate search identifierType?
-		//fields.add("identifierType");
-		return f.bool().with(b -> {
-			b.minimumShouldMatchNumber(1);
-			b.should(f.simpleQueryString().field("identifierPhrase").matching(query).boost(8f));
-			String matchMode = Context.getAdministrationService()
-				.getGlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_PATIENT_IDENTIFIER_SEARCH_MATCH_MODE);
-			if (matchExactly) {
-				b.should(f.simpleQueryString().field("identifierExact").matching(query).boost(4f));
-			}
-			else if (OpenmrsConstants.GLOBAL_PROPERTY_PATIENT_SEARCH_MATCH_START.equals(matchMode)) {
-				b.should(f.simpleQueryString().field("identifierStart").matching(query).boost(2f));
-			}
-			else  {
-				b.should(f.simpleQueryString().field("identifierAnywhere").matching(query));
-			}
-		}).toPredicate();
-	
+	private LuceneQuery<PatientIdentifier> getPatientIdentifierLuceneQuery(String query, List<PatientIdentifierType> identifierTypes, boolean matchExactly) {
+		LuceneQuery<PatientIdentifier> patientIdentifierLuceneQuery = getPatientIdentifierLuceneQuery(query, matchExactly);
+		List<Integer> identifierTypeIds = new ArrayList<Integer>();
+		for(PatientIdentifierType identifierType : identifierTypes) {
+			identifierTypeIds.add(identifierType.getId());
+		}
+		patientIdentifierLuceneQuery.include("identifierType.patientIdentifierTypeId", identifierTypeIds);
+		patientIdentifierLuceneQuery.include("patient.isPatient", true);
+		patientIdentifierLuceneQuery.skipSame("patient.personId");
+		
+		return patientIdentifierLuceneQuery;
 	}
+	
+	private LuceneQuery<PatientIdentifier> getPatientIdentifierLuceneQuery(String paramQuery, boolean matchExactly) {
+		String query = removeIdentifierPadding(paramQuery);
+		List<String> tokens = tokenizeIdentifierQuery(query);
+		query = StringUtils.join(tokens, " OR ");
+		List<String> fields = new ArrayList<>();
+		fields.add("identifierPhrase");
+		fields.add("identifierType");
+		String matchMode = Context.getAdministrationService()
+			.getGlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_PATIENT_IDENTIFIER_SEARCH_MATCH_MODE);
+		if (matchExactly) {
+			fields.add("identifierExact");
+		}
+		else if (OpenmrsConstants.GLOBAL_PROPERTY_PATIENT_SEARCH_MATCH_START.equals(matchMode)) {
+			fields.add("identifierStart");
+		} 
+		else  {
+			fields.add("identifierAnywhere");
+		}
+		return LuceneQuery.newQuery(PatientIdentifier.class, sessionFactory.getCurrentSession(), query, fields);
+	
+	}		
+		
+	private LuceneQuery<PatientIdentifier> getPatientIdentifierLuceneQuery(String query, boolean includeVoided, boolean matchExactly) {
+	    LuceneQuery<PatientIdentifier> luceneQuery = getPatientIdentifierLuceneQuery(query, matchExactly);
+		if(!includeVoided){
+        	luceneQuery.include("voided", false);
+			luceneQuery.include("patient.voided", false);
+        }
 
-	private SearchPredicate newPatientIdentifierSearchPredicate(SearchPredicateFactory predicateFactory, String query, boolean includeVoided, boolean matchExactly) {
-		return predicateFactory.bool().with(b -> {
-			b.must(getPatientIdentifierSearchPredicate(predicateFactory, query, matchExactly));
+        luceneQuery.include("patient.isPatient", true);
+		luceneQuery.skipSame("patient.personId");
 
-			if (!includeVoided) {
-				b.filter(predicateFactory.match().field("voided").matching(false));
-				b.filter(predicateFactory.match().field("patient.voided").matching(false));
-			}
-			b.filter(predicateFactory.match().field("patient.isPatient").matching(true));
-		}).toPredicate();
-	}
+        return luceneQuery;
+    }
 
 	private String removeIdentifierPadding(String query) {
 		String regex = Context.getAdministrationService().getGlobalProperty(OpenmrsConstants.GLOBAL_PROPERTY_PATIENT_IDENTIFIER_REGEX, "");

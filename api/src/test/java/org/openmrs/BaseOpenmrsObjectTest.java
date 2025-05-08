@@ -138,7 +138,7 @@ public class BaseOpenmrsObjectTest extends BaseContextSensitiveTest {
 		o.setUuid(null);
 		
 		//then
-		o.hashCode();
+		o.hashCode(); 
 	}
 	
 	@Test

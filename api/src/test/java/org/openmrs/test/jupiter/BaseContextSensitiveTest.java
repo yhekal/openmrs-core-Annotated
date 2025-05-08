@@ -74,6 +74,7 @@ import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.api.context.ContextMockHelper;
 import org.openmrs.api.context.Credentials;
 import org.openmrs.api.context.UsernamePasswordCredentials;
+import org.openmrs.module.ModuleConstants;
 import org.openmrs.test.Containers;
 import org.openmrs.test.OpenmrsMetadataHandler;
 import org.openmrs.test.SkipBaseSetup;
@@ -345,6 +346,9 @@ public abstract class BaseContextSensitiveTest {
 			//after that, just update, if there are any changes. This is for performance reasons.
 			runtimeProperties.setProperty(Environment.HBM2DDL_AUTO, "update");
 		}
+		
+		// we don't want to try to load core modules in tests
+		runtimeProperties.setProperty(ModuleConstants.IGNORE_CORE_MODULES_PROPERTY, "true");
 		
 		try {
 			File tempappdir = File.createTempFile("appdir-for-unit-tests-", "");
@@ -934,7 +938,7 @@ public abstract class BaseContextSensitiveTest {
 	public void baseSetupWithStandardDataAndAuthentication() throws SQLException {
 		// Open a session if needed
 		if (!Context.isSessionOpen()) {
-			Context.openSession();
+			Context.openSession(); // &line[openSession]
 		}
 		
 		// The skipBaseSetup flag is controlled by the @SkipBaseSetup annotation. 		if (useInMemoryDatabase()) {
@@ -967,7 +971,7 @@ public abstract class BaseContextSensitiveTest {
 			}
 		}
 		
-		Context.clearSession();
+		Context.clearSession(); // &line[clearSession]
 	}
 	
 	public Class<?>[] getIndexedTypes() {
@@ -976,13 +980,13 @@ public abstract class BaseContextSensitiveTest {
 	}
 	
 	/**
-	 * It needs to be called if you want to do a concept search after you modify a concept in a test.
+	 * It needs to be call if you want to do a concept search after you modify a concept in a test.
 	 * It is because index is automatically updated only after transaction is committed, which
 	 * happens only at the end of a test in our transactional tests.
 	 */
 	public void updateSearchIndex() {
-		for (Class<?> type: getIndexedTypes()) {
-			Context.updateSearchIndexForType(type);
+		for (Class<?> indexType : getIndexedTypes()) {
+			Context.updateSearchIndexForType(indexType);
 		}
 	}
 	

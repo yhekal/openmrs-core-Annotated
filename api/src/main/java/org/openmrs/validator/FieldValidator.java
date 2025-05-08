@@ -59,6 +59,7 @@ public class FieldValidator implements Validator {
 	 * should not fail if fieldType is null
 	 */
 	@Override
+		// &begin[validate]
 	public void validate(Object obj, Errors errors) throws APIException {
 		log.debug("{}.validate...", this.getClass().getName());
 		
@@ -77,4 +78,5 @@ public class FieldValidator implements Validator {
 		}
 		ValidateUtil.validateFieldLengths(errors, obj.getClass(), "name", "tableName", "attributeName", "retireReason");
 	}
+	// &end[validate]
 }

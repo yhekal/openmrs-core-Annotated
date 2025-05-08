@@ -59,7 +59,7 @@ public class HibernateOrderSetDAO implements OrderSetDAO {
 	 */
 	@Override
 	public OrderSet save(OrderSet orderSet) throws DAOException {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = sessionFactory.getCurrentSession(); // &line[getCurrentSession]
 		session.saveOrUpdate(orderSet);
 		return orderSet;
 	}
@@ -69,7 +69,7 @@ public class HibernateOrderSetDAO implements OrderSetDAO {
 	 */
 	@Override
 	public List<OrderSet> getOrderSets(boolean includeRetired) throws DAOException {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = sessionFactory.getCurrentSession(); // &line[getCurrentSession]
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<OrderSet> cq = cb.createQuery(OrderSet.class);
 		Root<OrderSet> root = cq.from(OrderSet.class);
@@ -87,7 +87,7 @@ public class HibernateOrderSetDAO implements OrderSetDAO {
 	 */
 	@Override
 	public OrderSet getOrderSetById(Integer orderSetId) throws DAOException {
-		return sessionFactory.getCurrentSession().get(OrderSet.class, orderSetId);
+		return sessionFactory.getCurrentSession().get(OrderSet.class, orderSetId); // &line[getCurrentSession]
 	}
 	
 	/**
@@ -111,7 +111,7 @@ public class HibernateOrderSetDAO implements OrderSetDAO {
 	 */
 	@Override
 	public List<OrderSetAttributeType> getAllOrderSetAttributeTypes() {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = sessionFactory.getCurrentSession(); // &line[getCurrentSession]
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<OrderSetAttributeType> cq = cb.createQuery(OrderSetAttributeType.class);
 		cq.from(OrderSetAttributeType.class);
@@ -125,7 +125,7 @@ public class HibernateOrderSetDAO implements OrderSetDAO {
 	 */
 	@Override
 	public OrderSetAttributeType getOrderSetAttributeType(Integer id) {
-		return sessionFactory.getCurrentSession().get(OrderSetAttributeType.class, id);
+		return sessionFactory.getCurrentSession().get(OrderSetAttributeType.class, id); // &line[getCurrentSession]
 	}
 
 	/**
@@ -141,7 +141,7 @@ public class HibernateOrderSetDAO implements OrderSetDAO {
 	 */
 	@Override
 	public OrderSetAttributeType saveOrderSetAttributeType(OrderSetAttributeType orderSetAttributeType) {
-		sessionFactory.getCurrentSession().saveOrUpdate(orderSetAttributeType);
+		sessionFactory.getCurrentSession().saveOrUpdate(orderSetAttributeType); // &line[getCurrentSession]
 		return orderSetAttributeType;
 	}
 
@@ -150,7 +150,7 @@ public class HibernateOrderSetDAO implements OrderSetDAO {
 	 */
 	@Override
 	public void deleteOrderSetAttributeType(OrderSetAttributeType orderSetAttributeType) {
-		sessionFactory.getCurrentSession().delete(orderSetAttributeType);
+		sessionFactory.getCurrentSession().delete(orderSetAttributeType); // &line[getCurrentSession]
 	}
 
 	/**
@@ -166,7 +166,7 @@ public class HibernateOrderSetDAO implements OrderSetDAO {
 	 */
 	@Override
 	public OrderSetAttributeType getOrderSetAttributeTypeByName(String name) {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = sessionFactory.getCurrentSession(); // &line[getCurrentSession]
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<OrderSetAttributeType> cq = cb.createQuery(OrderSetAttributeType.class);
 		Root<OrderSetAttributeType> root = cq.from(OrderSetAttributeType.class);
